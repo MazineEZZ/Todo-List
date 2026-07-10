@@ -11,6 +11,11 @@ function createTodo(id, title, description) {
     taskElement.classList.add("task-item");
     taskElement.dataset.id = id;
 
+    const markCompleteBtn = document.createElement("button");
+    markCompleteBtn.setAttribute("id", "mark-complete-task");
+    markCompleteBtn.classList.add("mark-complete-btn");
+    markCompleteBtn.textContent = "✅";
+
     const taskDetails = document.createElement("div");
     taskDetails.classList.add("details");
 
@@ -25,12 +30,19 @@ function createTodo(id, title, description) {
     taskDetails.appendChild(taskTitle);
     taskDetails.appendChild(taskDescription);
 
+    const editTaskBtn = document.createElement("button");
+    editTaskBtn.setAttribute("id", "edit-task");
+    editTaskBtn.classList.add("edit-task-btn");
+    editTaskBtn.textContent = "✏️";
+
     const deleteTaskBtn = document.createElement("button");
     deleteTaskBtn.setAttribute("id", "delete-task");
     deleteTaskBtn.classList.add("delete-btn");
     deleteTaskBtn.textContent = "❌";
 
+    taskElement.appendChild(markCompleteBtn);
     taskElement.appendChild(taskDetails);
+    taskElement.appendChild(editTaskBtn);
     taskElement.appendChild(deleteTaskBtn);
 
     return taskElement;
@@ -41,12 +53,78 @@ function createTodosContainer(tasksArray) {
     todosContainer.classList.add("tasks-container");
     
     tasksArray.forEach(task => {
-        todosContainer.appendChild(createTodo(task.id, task.title, task.description));
+        if (!task.isComplete) {
+            todosContainer.appendChild(createTodo(task.id, task.title, task.description));
+        }
     });
 
     return todosContainer;
 }
 
+
+export function renderEditTaskModal(taskId, taskTitle, taskDescription) {
+    const editTaskModal = document.createElement("dialog");
+    editTaskModal.setAttribute("id", "edit-task-modal");
+    editTaskModal.classList.add("edit-task-dialog");
+    editTaskModal.dataset.id = taskId;
+
+    const modalTitle = document.createElement("h1");
+    modalTitle.classList.add("edit-task-modal", "title");
+    modalTitle.textContent = "Edit Task";
+    
+    const form = document.createElement("form");
+
+    const titleContainer = document.createElement("div");
+
+    const titleLabel = document.createElement("label");
+    titleLabel.textContent = "Title:";
+    titleLabel.setAttribute("for", "edit-task-title");
+    
+    const titleInput = document.createElement("input");
+    titleInput.setAttribute("id", "edit-task-title");
+    titleInput.value = taskTitle;
+
+    titleContainer.appendChild(titleLabel);
+    titleContainer.appendChild(titleInput);
+
+    const descriptionContainer = document.createElement("div");
+
+    const descriptionLabel = document.createElement("label");
+    descriptionLabel.textContent = "Description:";
+    descriptionLabel.setAttribute("for", "edit-task-desc");
+
+    const descriptionInput = document.createElement("textarea");
+    descriptionInput.setAttribute("id", "edit-task-desc");
+    descriptionInput.value = taskDescription;
+
+    descriptionContainer.appendChild(descriptionLabel);
+    descriptionContainer.appendChild(descriptionInput);
+
+    const buttonContainer = document.createElement("div");
+    buttonContainer.classList.add("modal-button-container");
+
+    const cancelBtn = document.createElement("button");
+    cancelBtn.setAttribute("id", "cancel-modal");
+    cancelBtn.classList.add("cancel-modal-btn");
+    cancelBtn.textContent = "Cancel";
+
+    const saveBtn = document.createElement("button");
+    saveBtn.setAttribute("id", "save-modal");
+    saveBtn.classList.add("save-modal-btn");
+    saveBtn.textContent = "Save";
+
+    buttonContainer.appendChild(cancelBtn);
+    buttonContainer.appendChild(saveBtn);
+
+    form.appendChild(titleContainer);
+    form.appendChild(descriptionContainer);
+    form.appendChild(buttonContainer);
+
+    editTaskModal.appendChild(modalTitle);
+    editTaskModal.appendChild(form);
+
+    return editTaskModal;
+}
 
 export function renderSidebar() {
     const sidebarWrapper = document.createElement("div");
