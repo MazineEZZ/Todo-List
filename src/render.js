@@ -1,4 +1,3 @@
-
 function createTitle(filterTitle) {
     const title = document.createElement("h1");
     title.classList.add("title");
@@ -7,19 +6,47 @@ function createTitle(filterTitle) {
     return title;
 }
 
+function createTodo(id, title, description) {
+    const taskElement = document.createElement("li");
+    taskElement.classList.add("task-item");
+    taskElement.dataset.id = id;
+
+    const taskDetails = document.createElement("div");
+    taskDetails.classList.add("details");
+
+    const taskTitle = document.createElement("p");
+    taskTitle.classList.add("title");
+    taskTitle.textContent = title;
+
+    const taskDescription = document.createElement("p");
+    taskDescription.classList.add("description");
+    taskDescription.textContent = description;
+
+    taskDetails.appendChild(taskTitle);
+    taskDetails.appendChild(taskDescription);
+
+    const deleteTaskBtn = document.createElement("button");
+    deleteTaskBtn.setAttribute("id", "delete-task");
+    deleteTaskBtn.classList.add("delete-btn");
+    deleteTaskBtn.textContent = "❌";
+
+    taskElement.appendChild(taskDetails);
+    taskElement.appendChild(deleteTaskBtn);
+
+    return taskElement;
+}
+
 function createTodosContainer(tasksArray) {
     const todosContainer = document.createElement("ul");
-    todosContainer.classList.add("todos-container");
+    todosContainer.classList.add("tasks-container");
     
     tasksArray.forEach(task => {
-        const taskElement = document.createElement("li");
-        taskElement.classList.add("todo-item");
-        taskElement.textContent = task.title;
-        todosContainer.appendChild(taskElement);
+        todosContainer.appendChild(createTodo(task.id, task.title, task.description));
     });
 
     return todosContainer;
 }
+
 
 export function renderSidebar() {
     const sidebarWrapper = document.createElement("div");
