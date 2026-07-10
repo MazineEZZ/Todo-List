@@ -39,9 +39,15 @@ body {
     padding: 20px;
 }
 
+.content-view .header {
+    display: flex;
+    justify-content: space-between;
+}
+
 .content-view .tasks-container {
     padding: 0px 100px;
 }
+
 
 .content-view .task-item {
     display: flex;

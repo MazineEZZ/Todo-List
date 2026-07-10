@@ -1,37 +1,9 @@
-import { renderSidebar, renderContentView, renderEditTaskModal } from "./render.js";
+import { renderSidebar, renderContentView, renderEditTaskModal, renderAddTaskModal } from "./render.js";
+import { tasksArray, addTODO, deleteTODO, setTODOAsComplete, getTaskById } from "./todoStorage.js";
 import "./reset.css"
 import "./styles.css";
 
 // Global Variables
-let tasksArray = [];
-
-function createTODO(title, description) { // due dates and priorities come later
-    const id = crypto.randomUUID()
-    const isComplete = false;
-    return { id, title, description, isComplete};
-}
-
-function addTODO(title, description) {
-    tasksArray.push(createTODO(title, description));
-}
-
-function deleteTODO(id) {
-    tasksArray = tasksArray.filter(task => task.id !== id);
-}
-
-function setTODOAsComplete(id) {
-    tasksArray.forEach(task => {
-        if (task.id === id) {
-            task.isComplete = true;
-        }
-    })
-    console.log(tasksArray);
-}
-
-function getTaskById(id) {
-    return tasksArray.find(task => task.id === id);
-}
-
 function refreshPage() {
     const appContainer = document.querySelector("#app-container");
     appContainer.removeChild(appContainer.querySelector("#main-content"));
@@ -59,9 +31,9 @@ function updateTaskDetails(id, newTask) {
     task.description = newTask.description;
 }
 
-function getModalTaskDetails() {
-    const titleInput = document.querySelector("#edit-task-title");
-    const descriptionInput = document.querySelector("#edit-task-desc");
+function getModalTaskDetails(type) {
+    const titleInput = document.querySelector(`#${type}-task-title`);
+    const descriptionInput = document.querySelector(`#${type}-task-desc`);
 
     const title = titleInput.value;
     const description = descriptionInput.value;
@@ -69,46 +41,80 @@ function getModalTaskDetails() {
     return { title, description };
 }
 
+function addNewTask(title, desc) {
+    addTODO(title, desc);
+    refreshPage();
+}
+
 function setUpEventListeners(appContainer, modalContainer) {
     appContainer.addEventListener("click", (e) => {
         if (e.target.classList.contains("delete-btn")) {
-            const taskItem = e.target.closest(".task-item");
-            const taskId = taskItem.dataset.id;
+            const taskId = e.target.closest(".task-item").dataset.id;
 
             deleteTODO(taskId);
             refreshPage();
         }
 
         if (e.target.classList.contains("mark-complete-btn")) {
-            const taskItem = e.target.closest(".task-item");
-            const taskId = taskItem.dataset.id;
+            const taskId = e.target.closest(".task-item").dataset.id;
 
             setTODOAsComplete(taskId);
             refreshPage();
         }
         
         if (e.target.classList.contains("edit-task-btn")) {
-            const taskItem = e.target.closest(".task-item");
-            const taskId = taskItem.dataset.id;
+            const taskId = e.target.closest(".task-item").dataset.id;
             const task = getTaskById(taskId);
         
             appendModal(renderEditTaskModal(task.id, task.title, task.description));
+        }
+
+        if (e.target.classList.contains("add-task-btn")) {
+            appendModal(renderAddTaskModal());
         }
     });
 
     modalContainer.addEventListener("click" , (e) => {
         if (e.target.classList.contains("cancel-modal-btn")) {
-            removeModal(e.target.closest(".edit-task-dialog"));
+            const taskModal = e.target.closest("[id$=task-modal]");
+            const type = taskModal.dataset.type;
+            const taskId = taskModal.dataset.id; 
+            
+            removeModal(e.target.closest(`.${type}-task-dialog`));
         }
         
         if (e.target.classList.contains("save-modal-btn")) {
             e.preventDefault();
-            const editTaskModal = e.target.closest("#edit-task-modal");
-            const taskId = editTaskModal.dataset.id;
+            const taskModal = e.target.closest("[id$=task-modal]");
+            const type = taskModal.dataset.type;
+            const taskId = taskModal.dataset.id;
 
-            updateTaskDetails(taskId, getModalTaskDetails());
-            removeModal(editTaskModal);
+            const taskDetails = getModalTaskDetails(type);
+
+            if (taskDetails.title.trim() === "") {
+                alert("Task Title cannot be empty!");
+                return;
+            }
+            
+            updateTaskDetails(taskId, taskDetails);
+            removeModal(taskModal);
             refreshPage();
+        }
+
+        if (e.target.classList.contains("add-modal-btn")) {
+            e.preventDefault();
+            const taskModal = e.target.closest("[id$=task-modal]");
+            const type = taskModal.dataset.type;
+            const taskTitle = document.querySelector(`#${type}-task-title`).value;
+            const taskDescription = document.querySelector(`#${type}-task-desc`).value;
+
+            if (taskTitle.trim() === "") {
+                alert("Task Title cannot be empty!");
+                return;
+            }
+
+            removeModal(taskModal);
+            addNewTask(taskTitle, taskDescription);
         }
     });
 }

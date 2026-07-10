@@ -61,16 +61,16 @@ function createTodosContainer(tasksArray) {
     return todosContainer;
 }
 
-
-export function renderEditTaskModal(taskId, taskTitle, taskDescription) {
-    const editTaskModal = document.createElement("dialog");
-    editTaskModal.setAttribute("id", "edit-task-modal");
-    editTaskModal.classList.add("edit-task-dialog");
-    editTaskModal.dataset.id = taskId;
-
+function renderModal(type, title, taskId = "", taskTitle = "", taskDescription = "") {
+    const taskModal = document.createElement("dialog");
+    taskModal.setAttribute("id", `${type}-task-modal`);
+    taskModal.classList.add(`${type}-task-dialog`);
+    taskModal.dataset.id = taskId;
+    taskModal.dataset.type = type;
+    
     const modalTitle = document.createElement("h1");
-    modalTitle.classList.add("edit-task-modal", "title");
-    modalTitle.textContent = "Edit Task";
+    modalTitle.classList.add("modal-title");
+    modalTitle.textContent = title;
     
     const form = document.createElement("form");
 
@@ -78,10 +78,10 @@ export function renderEditTaskModal(taskId, taskTitle, taskDescription) {
 
     const titleLabel = document.createElement("label");
     titleLabel.textContent = "Title:";
-    titleLabel.setAttribute("for", "edit-task-title");
+    titleLabel.setAttribute("for", `${type}-task-title`);
     
     const titleInput = document.createElement("input");
-    titleInput.setAttribute("id", "edit-task-title");
+    titleInput.setAttribute("id", `${type}-task-title`);
     titleInput.value = taskTitle;
 
     titleContainer.appendChild(titleLabel);
@@ -91,10 +91,10 @@ export function renderEditTaskModal(taskId, taskTitle, taskDescription) {
 
     const descriptionLabel = document.createElement("label");
     descriptionLabel.textContent = "Description:";
-    descriptionLabel.setAttribute("for", "edit-task-desc");
+    descriptionLabel.setAttribute("for", `${type}-task-desc`);
 
     const descriptionInput = document.createElement("textarea");
-    descriptionInput.setAttribute("id", "edit-task-desc");
+    descriptionInput.setAttribute("id", `${type}-task-desc`);
     descriptionInput.value = taskDescription;
 
     descriptionContainer.appendChild(descriptionLabel);
@@ -107,26 +107,43 @@ export function renderEditTaskModal(taskId, taskTitle, taskDescription) {
     cancelBtn.setAttribute("id", "cancel-modal");
     cancelBtn.classList.add("cancel-modal-btn");
     cancelBtn.textContent = "Cancel";
-
-    const saveBtn = document.createElement("button");
-    saveBtn.setAttribute("id", "save-modal");
-    saveBtn.classList.add("save-modal-btn");
-    saveBtn.textContent = "Save";
-
+    
     buttonContainer.appendChild(cancelBtn);
-    buttonContainer.appendChild(saveBtn);
+
+    let acceptBtn;
+    if (type == "edit") {
+        acceptBtn = document.createElement("button");
+        acceptBtn.setAttribute("id", "save-modal-content");
+        acceptBtn.classList.add("save-modal-btn");
+        acceptBtn.textContent = "Save";
+    } else if (type == "add") {
+        acceptBtn = document.createElement("button");
+        acceptBtn.setAttribute("id", "add-modal-content");
+        acceptBtn.classList.add("add-modal-btn");
+        acceptBtn.textContent = "Add";
+    }
+    
+    buttonContainer.appendChild(acceptBtn);
 
     form.appendChild(titleContainer);
     form.appendChild(descriptionContainer);
     form.appendChild(buttonContainer);
 
-    editTaskModal.appendChild(modalTitle);
-    editTaskModal.appendChild(form);
+    taskModal.appendChild(modalTitle);
+    taskModal.appendChild(form);
 
-    return editTaskModal;
+    return taskModal;
 }
 
-export function renderSidebar() {
+function renderEditTaskModal(taskId, taskTitle, taskDescription) {
+    return renderModal("edit", "Edit Task", taskId, taskTitle, taskDescription);
+}
+
+function renderAddTaskModal() {
+    return renderModal("add", "Add Task");
+}
+
+function renderSidebar() {
     const sidebarWrapper = document.createElement("div");
     sidebarWrapper.classList.add("sidebar");
     sidebarWrapper.setAttribute("id", "sidebar");
@@ -168,15 +185,28 @@ export function renderSidebar() {
     return sidebarWrapper;
 }
 
-export function renderContentView(filterTitle, tasksArray, isProject = false) {
+function renderContentView(filterTitle, tasksArray, isProject = false) {
     const contentWrapper = document.createElement("div");
     contentWrapper.classList.add("content-view");
     contentWrapper.setAttribute("id", "main-content");
     
-    const title = createTitle(filterTitle)
-    const todosContainer = createTodosContainer(tasksArray)
+    const header = document.createElement("div");
+    header.classList.add("header");
+
+    const title = createTitle(filterTitle);
+
+    const addTaskBtn = document.createElement("button");
+    addTaskBtn.setAttribute("id", "add-task");
+    addTaskBtn.classList.add("add-task-btn");
+    addTaskBtn.textContent = "➕";
+
+    const todosContainer = createTodosContainer(tasksArray);
+
     
-    contentWrapper.appendChild(title);
+    header.appendChild(title);
+    header.appendChild(addTaskBtn);
+
+    contentWrapper.appendChild(header);
 
     if (isProject) {
         const projectDescription = document.createElement("p");
@@ -188,3 +218,5 @@ export function renderContentView(filterTitle, tasksArray, isProject = false) {
     
     return contentWrapper;
 }
+
+export { renderEditTaskModal, renderAddTaskModal, renderSidebar, renderContentView };
