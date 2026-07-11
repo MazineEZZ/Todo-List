@@ -136,9 +136,6 @@ function initializeApp() {
     appContainer.classList.add("app-container");
     appContainer.setAttribute("id", "app-container");
     
-    addTODO("Go grocery shopping", "Buy milk, eggs, and vegetables");
-    addTODO("Make lunch", "Vegetable stew");
-    
     const sidebar = renderSidebar();
     const contentView = renderContentView("Inbox", tasksArray);
 
