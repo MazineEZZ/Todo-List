@@ -1,5 +1,5 @@
 import { renderSidebar, renderContentView, renderEditTaskModal, renderAddTaskModal } from "./render.js";
-import { tasksArray, addTODO, deleteTODO, setTODOAsComplete, getTaskById } from "./todoStorage.js";
+import { tasksArray, addTODO, deleteTODO, setTODOAsComplete, getTaskById, updateTasksArray } from "./todoStorage.js";
 import "./reset.css"
 import "./styles.css";
 
@@ -29,6 +29,7 @@ function updateTaskDetails(id, newTask) {
     const task = getTaskById(id);
     task.title = newTask.title;
     task.description = newTask.description;
+    updateTasksArray();
 }
 
 function getModalTaskDetails(type) {
