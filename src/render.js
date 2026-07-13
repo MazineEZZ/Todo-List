@@ -1,3 +1,27 @@
+function pad(number) {
+    return String(number).padStart(2, "0");
+}
+
+function getDueDateOption(dueDate) {
+    const todayObj = new Date();
+    const tmrObj = new Date();
+    tmrObj.setDate(todayObj.getDate() + 1);
+
+    const today = `${todayObj.getFullYear()}-${pad(todayObj.getMonth() + 1)}-${pad(todayObj.getDate())}`;
+    const tmr = `${tmrObj.getFullYear()}-${pad(tmrObj.getMonth() + 1)}-${pad(tmrObj.getDate())}`
+
+    console.log(today);
+
+    if (dueDate == today) {
+        return "today";
+    } else if (dueDate == tmr) {
+        return "tmrw";
+    } else {
+        return "pick";
+    }
+    
+}
+
 function createTitle(filterTitle) {
     const title = document.createElement("h1");
     title.classList.add("title");
@@ -6,13 +30,19 @@ function createTitle(filterTitle) {
     return title;
 }
 
-function createTodo(id, title, description) {
+function createTodo(task) {
+    const id = task.id;
+    const title = task.title;
+    const description = task.description;
+    const dueDate = task.dueDate;
+    const priority = task.priority;
+
     const taskElement = document.createElement("li");
     taskElement.classList.add("task-item");
     taskElement.dataset.id = id;
 
     const markCompleteBtn = document.createElement("button");
-    markCompleteBtn.setAttribute("id", "mark-complete-task");
+    markCompleteBtn.id = "mark-complete-task";
     markCompleteBtn.classList.add("mark-complete-btn");
     markCompleteBtn.textContent = "✅";
 
@@ -27,16 +57,21 @@ function createTodo(id, title, description) {
     taskDescription.classList.add("description");
     taskDescription.textContent = description;
 
+    const taskDueDate = document.createElement("p");
+    taskDueDate.classList.add("dueDate");
+    taskDueDate.textContent = dueDate;
+
     taskDetails.appendChild(taskTitle);
     taskDetails.appendChild(taskDescription);
+    taskDetails.appendChild(taskDueDate);
 
     const editTaskBtn = document.createElement("button");
-    editTaskBtn.setAttribute("id", "edit-task");
+    editTaskBtn.id = "edit-task";
     editTaskBtn.classList.add("edit-task-btn");
     editTaskBtn.textContent = "✏️";
 
     const deleteTaskBtn = document.createElement("button");
-    deleteTaskBtn.setAttribute("id", "delete-task");
+    deleteTaskBtn.id = "delete-task";
     deleteTaskBtn.classList.add("delete-btn");
     deleteTaskBtn.textContent = "❌";
 
@@ -54,16 +89,16 @@ function createTodosContainer(tasksArray) {
     
     tasksArray.forEach(task => {
         if (!task.isComplete) {
-            todosContainer.appendChild(createTodo(task.id, task.title, task.description));
+            todosContainer.appendChild(createTodo(task));
         }
     });
 
     return todosContainer;
 }
 
-function renderModal(type, title, taskId = "", taskTitle = "", taskDescription = "") {
+function renderModal(type, title, taskId = "", taskTitle = "", taskDescription = "", taskDueDate = "") {
     const taskModal = document.createElement("dialog");
-    taskModal.setAttribute("id", `${type}-task-modal`);
+    taskModal.id = `${type}-task-modal`;
     taskModal.classList.add(`${type}-task-dialog`);
     taskModal.dataset.id = taskId;
     taskModal.dataset.type = type;
@@ -78,10 +113,10 @@ function renderModal(type, title, taskId = "", taskTitle = "", taskDescription =
 
     const titleLabel = document.createElement("label");
     titleLabel.textContent = "Title:";
-    titleLabel.setAttribute("for", `${type}-task-title`);
+    titleLabel.htmlFor = `${type}-task-title`;
     
     const titleInput = document.createElement("input");
-    titleInput.setAttribute("id", `${type}-task-title`);
+    titleInput.id = `${type}-task-title`;
     titleInput.value = taskTitle;
 
     titleContainer.appendChild(titleLabel);
@@ -91,34 +126,75 @@ function renderModal(type, title, taskId = "", taskTitle = "", taskDescription =
 
     const descriptionLabel = document.createElement("label");
     descriptionLabel.textContent = "Description:";
-    descriptionLabel.setAttribute("for", `${type}-task-desc`);
+    descriptionLabel.htmlFor = `${type}-task-desc`;
 
     const descriptionInput = document.createElement("textarea");
-    descriptionInput.setAttribute("id", `${type}-task-desc`);
+    descriptionInput.id = `${type}-task-desc`;
     descriptionInput.value = taskDescription;
 
     descriptionContainer.appendChild(descriptionLabel);
     descriptionContainer.appendChild(descriptionInput);
 
+    const dueDateContainer = document.createElement("div");
+
+    const dueDateLegend = document.createElement("legend");
+    dueDateLegend.textContent = "Due Date:";
+
+    const dueDateOptions = document.createElement("div");
+    dueDateOptions.id = `${type}-task-dueDate`;
+
+    const dueDateToday = document.createElement("button");
+    dueDateToday.id = "today-option";  
+    dueDateToday.textContent = "Today";
+    dueDateToday.type = "button";
+    dueDateToday.classList.add("dueDate-option");
+    
+    const dueDateTomorrow = document.createElement("button");
+    dueDateTomorrow.id = "tmrw-option";  
+    dueDateTomorrow.textContent = "Tomorrow";
+    dueDateTomorrow.type = "button";
+    dueDateTomorrow.classList.add("dueDate-option");
+    
+    const dueDatePick = document.createElement("button");
+    dueDatePick.id = "pick-option";  
+    dueDatePick.textContent = "Pick a Date";
+    dueDatePick.type = "button";
+    dueDatePick.classList.add("dueDate-option");
+    
+    dueDateOptions.appendChild(dueDateToday);
+    dueDateOptions.appendChild(dueDateTomorrow);
+    dueDateOptions.appendChild(dueDatePick);
+
+    if (taskDueDate) {
+        dueDateOptions.childNodes.forEach((option) => {
+            if (option.id.match(getDueDateOption(taskDueDate))) {
+                option.classList.add("selected");
+            }
+        })    
+    }
+
+    dueDateContainer.appendChild(dueDateLegend);
+    dueDateContainer.appendChild(dueDateOptions);
+    
     const buttonContainer = document.createElement("div");
     buttonContainer.classList.add("modal-button-container");
 
     const cancelBtn = document.createElement("button");
-    cancelBtn.setAttribute("id", "cancel-modal");
-    cancelBtn.classList.add("cancel-modal-btn");
+    cancelBtn.id = "cancel-modal";
     cancelBtn.textContent = "Cancel";
+    cancelBtn.classList.add("cancel-modal-btn");
     
     buttonContainer.appendChild(cancelBtn);
 
     let acceptBtn;
     if (type == "edit") {
         acceptBtn = document.createElement("button");
-        acceptBtn.setAttribute("id", "save-modal-content");
+        acceptBtn.id = "save-modal-content";
         acceptBtn.classList.add("save-modal-btn");
         acceptBtn.textContent = "Save";
     } else if (type == "add") {
         acceptBtn = document.createElement("button");
-        acceptBtn.setAttribute("id", "add-modal-content");
+        acceptBtn.id = "add-modal-content";
         acceptBtn.classList.add("add-modal-btn");
         acceptBtn.textContent = "Add";
     }
@@ -127,6 +203,7 @@ function renderModal(type, title, taskId = "", taskTitle = "", taskDescription =
 
     form.appendChild(titleContainer);
     form.appendChild(descriptionContainer);
+    form.appendChild(dueDateContainer);
     form.appendChild(buttonContainer);
 
     taskModal.appendChild(modalTitle);
@@ -135,8 +212,8 @@ function renderModal(type, title, taskId = "", taskTitle = "", taskDescription =
     return taskModal;
 }
 
-function renderEditTaskModal(taskId, taskTitle, taskDescription) {
-    return renderModal("edit", "Edit Task", taskId, taskTitle, taskDescription);
+function renderEditTaskModal(taskId, taskTitle, taskDescription, taskDueDate) {
+    return renderModal("edit", "Edit Task", taskId, taskTitle, taskDescription, taskDueDate);
 }
 
 function renderAddTaskModal() {
@@ -146,7 +223,7 @@ function renderAddTaskModal() {
 function renderSidebar() {
     const sidebarWrapper = document.createElement("div");
     sidebarWrapper.classList.add("sidebar");
-    sidebarWrapper.setAttribute("id", "sidebar");
+    sidebarWrapper.id = "sidebar";
 
     // Profile Compartment
     const profile = document.createElement("div");
@@ -188,7 +265,7 @@ function renderSidebar() {
 function renderContentView(filterTitle, tasksArray, isProject = false) {
     const contentWrapper = document.createElement("div");
     contentWrapper.classList.add("content-view");
-    contentWrapper.setAttribute("id", "main-content");
+    contentWrapper.id = "main-content";
     
     const header = document.createElement("div");
     header.classList.add("header");
@@ -196,7 +273,7 @@ function renderContentView(filterTitle, tasksArray, isProject = false) {
     const title = createTitle(filterTitle);
 
     const addTaskBtn = document.createElement("button");
-    addTaskBtn.setAttribute("id", "add-task");
+    addTaskBtn.id = "add-task";
     addTaskBtn.classList.add("add-task-btn");
     addTaskBtn.textContent = "➕";
 
@@ -219,4 +296,4 @@ function renderContentView(filterTitle, tasksArray, isProject = false) {
     return contentWrapper;
 }
 
-export { renderEditTaskModal, renderAddTaskModal, renderSidebar, renderContentView };
+export { renderEditTaskModal, renderAddTaskModal, renderSidebar, renderContentView, pad };

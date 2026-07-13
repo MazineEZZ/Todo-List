@@ -1,4 +1,4 @@
-import { renderSidebar, renderContentView, renderEditTaskModal, renderAddTaskModal } from "./render.js";
+import { renderSidebar, renderContentView, renderEditTaskModal, renderAddTaskModal, pad } from "./render.js";
 import { tasksArray, addTODO, deleteTODO, setTODOAsComplete, getTaskById, updateTasksArray } from "./todoStorage.js";
 import "./reset.css"
 import "./styles.css";
@@ -27,24 +27,84 @@ function removeModal(modal) {
 
 function updateTaskDetails(id, newTask) {
     const task = getTaskById(id);
+    
     task.title = newTask.title;
     task.description = newTask.description;
+    task.dueDate = newTask.dueDate;
+
     updateTasksArray();
 }
 
 function getModalTaskDetails(type) {
     const titleInput = document.querySelector(`#${type}-task-title`);
     const descriptionInput = document.querySelector(`#${type}-task-desc`);
+    const dueDateOption = document.querySelector(`#${type}-task-dueDate>.selected`);
 
     const title = titleInput.value;
     const description = descriptionInput.value;
+    const dueDate = getDate(dueDateOption.id);
 
-    return { title, description };
+    return { title, description, dueDate };
 }
 
-function addNewTask(title, desc) {
-    addTODO(title, desc);
+function getDate(option) {
+    const months31 = [1, 3, 5, 7, 8, 10, 12];
+    const months30 = [4, 6, 9, 11];
+
+    const now = new Date();
+    let year = now.getFullYear();    
+    let month = now.getMonth() + 1;
+    let day = now.getDate();
+
+    if (option.match("today")) {
+        return `${year}-${pad(month)}-${pad(day)}`;
+    } else if (option.match("tmrw")) {
+        let nextDay = day + 1;
+
+        if (month == 2) {
+            const maxFeb = isLeapYear(year) ? 29 : 28;
+            if (nextDay > maxFeb) {
+                nextDay = 1;
+                month++;
+            } 
+        } else if (months30.includes(month)) {
+            if (nextDay > 30) {
+                nextDay = 1;
+                month++;
+            }
+        } else if (months31.includes(month)) {
+            if (nextDay > 31) {
+                nextDay = 1;
+                month++;
+            }
+        }
+
+        if (month > 12) {
+            month = 1;
+            year++;
+        }
+
+        return `${year}-${pad(month)}-${pad(nextDay)}`;
+    }
+}
+
+function isLeapYear(year) {
+    return (!(year % 4)) ? ((!(year % 100)) ? !(year % 400) : true ): false;
+}
+
+function addNewTask(title, desc, dueDate) {
+    addTODO(title, desc, dueDate);
     refreshPage();
+}
+
+function toggleDueDateOption(option) {
+    const options = document.querySelectorAll(".dueDate-option");
+
+    options.forEach(opt => {
+        opt.classList.remove("selected");
+    })
+
+    option.classList.add("selected");
 }
 
 function setUpEventListeners(appContainer, modalContainer) {
@@ -67,7 +127,7 @@ function setUpEventListeners(appContainer, modalContainer) {
             const taskId = e.target.closest(".task-item").dataset.id;
             const task = getTaskById(taskId);
         
-            appendModal(renderEditTaskModal(task.id, task.title, task.description));
+            appendModal(renderEditTaskModal(task.id, task.title, task.description, task.dueDate));
         }
 
         if (e.target.classList.contains("add-task-btn")) {
@@ -106,19 +166,23 @@ function setUpEventListeners(appContainer, modalContainer) {
             e.preventDefault();
             const taskModal = e.target.closest("[id$=task-modal]");
             const type = taskModal.dataset.type;
-            const taskTitle = document.querySelector(`#${type}-task-title`).value;
-            const taskDescription = document.querySelector(`#${type}-task-desc`).value;
+            const newTask = getModalTaskDetails(type);
 
-            if (taskTitle.trim() === "") {
+            if (newTask.title.trim() === "") {
                 alert("Task Title cannot be empty!");
                 return;
             }
 
             removeModal(taskModal);
-            addNewTask(taskTitle, taskDescription);
+            addNewTask(...Object.values(newTask));
+        }
+
+        if (e.target.classList.contains("dueDate-option")) {
+            toggleDueDateOption(e.target);
         }
     });
 }
+
 
 function initializeModalContainer() {
     const modalContainer = document.createElement("div");

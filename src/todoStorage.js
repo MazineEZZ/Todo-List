@@ -16,14 +16,23 @@ let tasksArray = [
 loadTasks();
 saveTasks();
 
-function createTODO(title, description) { // due dates and priorities come later
+function createTODO(title, description, dueDate, priority) { // due dates and priorities come later
     const id = crypto.randomUUID()
     const isComplete = false;
-    return { id, title, description, isComplete };
+    return {
+        id, // Number/ID
+        title, // String/Text
+        description, // String/Text
+        isComplete, // Boolean
+        dueDate, // String
+        priority // Number
+    };
 }
 
-function addTODO(title, description) {
-    tasksArray.push(createTODO(title, description));
+function addTODO(title, description, dueDate, priority) {
+    const task = createTODO(title, description, dueDate, priority)
+    tasksArray.push(task);
+
     saveTasks();
 }
 
@@ -43,7 +52,6 @@ function setTODOAsComplete(id) {
             task.isComplete = true;
         }
     })
-    console.log(tasksArray);
     saveTasks();
 }
 
