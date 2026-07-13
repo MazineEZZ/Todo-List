@@ -1,3 +1,5 @@
+import { getDueDateOption, pad } from "./utilities";
+
 function renderModal(type, title, taskId = "", taskTitle = "", taskDescription = "", taskDueDate = "", taskPriority="") {
     const taskModal = document.createElement("dialog");
     taskModal.id = `${type}-task-modal`;

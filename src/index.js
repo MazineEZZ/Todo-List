@@ -1,15 +1,16 @@
-import { pad, getDate, toggleSelectedOption, getDueDateOption } from "./utilities.js"
+import { pad, getDate, toggleSelectedOption, getDueDateOption, toggleSelectedTab } from "./utilities.js"
 import { tasksArray, addTODO, deleteTODO, setTODOAsComplete, getTaskById, updateTasksArray } from "./todoStorage.js";
+import { projectsArray, addProject, getProjectById } from "./projectStorage.js";
 import { renderSidebar, renderContentView, renderEditTaskModal, renderAddTaskModal } from "./renderHub.js";
 import "./reset.css"
 import "./styles.css";
 
-// Global Variables
 function refreshPage() {
+    const tabName = getCurrentTab().dataset.id;
     const appContainer = document.querySelector("#app-container");
     appContainer.removeChild(appContainer.querySelector("#main-content"));
 
-    const contentView = renderContentView("Inbox", tasksArray);
+    const contentView = renderContentView(tabName, tasksArray, isProjectTab());
 
     appContainer.appendChild(contentView);
 }
@@ -51,15 +52,30 @@ function getModalTaskDetails(type) {
     return { title, description, dueDate, priority };
 }
 
-function addNewTask(title, desc, dueDate, priority) {
-    addTODO(title, desc, dueDate, priority);
-    refreshPage();
+function addNewTask(task) {
+    addTODO(
+        task.title,
+        task.description,
+        task.dueDate,
+        task.priority,
+        task.project
+    );
+}
+
+function getCurrentTab() {
+    return document.querySelector(".navigation .selected");
+}
+
+function isProjectTab() {
+    console.log(getCurrentTab().classList)
+    return Array.from(getCurrentTab().classList).includes("project-tab");
 }
 
 function setUpEventListeners(appContainer, modalContainer) {
     appContainer.addEventListener("click", (e) => {
         if (e.target.classList.contains("delete-btn")) {
             const taskId = e.target.closest(".task-item").dataset.id;
+            const tabName = getCurrentTab().dataset.id
 
             deleteTODO(taskId);
             refreshPage();
@@ -80,6 +96,11 @@ function setUpEventListeners(appContainer, modalContainer) {
 
         if (e.target.classList.contains("add-task-btn")) {
             appendModal(renderAddTaskModal());
+        }
+
+        if (e.target.classList.contains("tab")) {
+            toggleSelectedTab(e.target);
+            refreshPage();
         }
     });
 
@@ -112,17 +133,21 @@ function setUpEventListeners(appContainer, modalContainer) {
 
         if (e.target.classList.contains("add-modal-btn")) {
             e.preventDefault();
+            const tabName = getCurrentTab().dataset.id;
             const taskModal = e.target.closest("[id$=task-modal]");
             const type = taskModal.dataset.type;
             const newTask = getModalTaskDetails(type);
-
+            console.log(document.querySelector(".selected"));
+            newTask.project = tabName;
+            
             if (newTask.title.trim() === "") {
                 alert("Task Title cannot be empty!");
                 return;
             }
-
+            
             removeModal(taskModal);
-            addNewTask(...Object.values(newTask));
+            addNewTask(newTask);
+            refreshPage();
         }
 
         if (e.target.classList.contains("dueDate-option")) {
@@ -134,7 +159,6 @@ function setUpEventListeners(appContainer, modalContainer) {
         }
     });
 }
-
 
 function initializeModalContainer() {
     const modalContainer = document.createElement("div");
@@ -153,8 +177,8 @@ function initializeApp() {
     appContainer.classList.add("app-container");
     appContainer.setAttribute("id", "app-container");
     
-    const sidebar = renderSidebar();
-    const contentView = renderContentView("Inbox", tasksArray);
+    const sidebar = renderSidebar(projectsArray);
+    const contentView = renderContentView("Inbox", tasksArray, true);
 
     setUpEventListeners(appContainer, modalContainer);
     
@@ -163,6 +187,5 @@ function initializeApp() {
     
     document.body.appendChild(appContainer);
 }
-
 
 initializeApp();

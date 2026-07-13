@@ -87,10 +87,29 @@ dialog form div:has([id*="desc"]) {
     display: flex;
     flex-direction: column;
 }
-.projects {
+.project-filter {
     display: flex;
     flex-direction: column;
 }
+.my-projects, .projects-container .project-tab {
+    display: flex;
+    justify-content: space-between;
+    flex: 1;
+    background-color: #e9e9ed;
+    border: 1px solid #a5a5b1;
+    border-radius: 1px;
+    padding: 2px;
+}
+.my-projects p {
+    flex-grow: 0.9;
+}
+.projects-container {
+    display: flex;
+    flex-direction: column;
+}
+.projects-container .project-tab {
+}
+
 
 /* CONTENT */
 .content-view {

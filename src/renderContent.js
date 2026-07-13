@@ -12,14 +12,12 @@ function createTodo(task) {
     const description = task.description;
     const dueDate = task.dueDate;
     const priority = task.priority;
-    console.log(priority);
 
     const taskElement = document.createElement("li");
     taskElement.classList.add("task-item");
     taskElement.dataset.id = id;
 
     const markCompleteBtn = document.createElement("button");
-    markCompleteBtn.id = "mark-complete-task";
     markCompleteBtn.classList.add("mark-complete-btn");
     markCompleteBtn.textContent = "✅";
 
@@ -48,12 +46,10 @@ function createTodo(task) {
     taskDetails.appendChild(taskPriority);
 
     const editTaskBtn = document.createElement("button");
-    editTaskBtn.id = "edit-task";
     editTaskBtn.classList.add("edit-task-btn");
     editTaskBtn.textContent = "✏️";
 
     const deleteTaskBtn = document.createElement("button");
-    deleteTaskBtn.id = "delete-task";
     deleteTaskBtn.classList.add("delete-btn");
     deleteTaskBtn.textContent = "❌";
 
@@ -65,20 +61,47 @@ function createTodo(task) {
     return taskElement;
 }
 
-function createTodosContainer(tasksArray) {
+function createTodosContainer(tasksArray, isProject, projectName) {
     const todosContainer = document.createElement("ul");
     todosContainer.classList.add("tasks-container");
     
     tasksArray.forEach(task => {
         if (!task.isComplete) {
-            todosContainer.appendChild(createTodo(task));
+            if (isProject) {
+                if (task.project !== "inbox" && task.project === projectName.toLowerCase()) {
+                    todosContainer.appendChild(createTodo(task));
+                }
+            } else {
+                if (task.project === "inbox") {
+                    todosContainer.appendChild(createTodo(task));
+                }
+            }
         }
     });
 
     return todosContainer;
 }
 
-function renderSidebar() {
+function createProject(project) {
+    const projectContainer = document.createElement("div");
+    projectContainer.classList.add("project-tab", "tab");
+    projectContainer.id = project.id;
+    projectContainer.dataset.id = project.name;
+
+    const projectName = document.createElement("p");
+    projectName.textContent = "# " + project.name;
+
+    const projectDeleteBtn = document.createElement("button");
+    projectDeleteBtn.classList.add("project-delete-btn");
+    projectDeleteBtn.textContent = "🗑️";
+
+    projectContainer.appendChild(projectName);
+    projectContainer.appendChild(projectDeleteBtn);
+
+    return projectContainer;
+}
+
+function renderSidebar(projects) {
     const sidebarWrapper = document.createElement("div");
     sidebarWrapper.classList.add("sidebar");
     sidebarWrapper.id = "sidebar";
@@ -97,12 +120,14 @@ function renderSidebar() {
     mainFilterContainer.classList.add("main-filter");
 
     const inboxContainer = document.createElement("button");
-    inboxContainer.classList.add("inbox", "filter");
+    inboxContainer.classList.add("inbox", "filter", "loaded-page", "tab");
     inboxContainer.textContent = "📩 Inbox";
+    inboxContainer.dataset.id = "inbox";
 
     const todayContainer = document.createElement("button");
-    todayContainer.classList.add("today", "filter");
+    todayContainer.classList.add("today", "filter", "tab");
     todayContainer.textContent = "⭐ Today";
+    todayContainer.dataset.id = "today";
 
     mainFilterContainer.appendChild(inboxContainer);
     mainFilterContainer.appendChild(todayContainer);
@@ -110,6 +135,29 @@ function renderSidebar() {
     // Projects Filter Compartment
     const projectsFilterContainer = document.createElement("div");
     projectsFilterContainer.classList.add("project-filter");
+
+    const myProjectsContainer = document.createElement("div");
+    myProjectsContainer.classList.add("my-projects");
+
+    const addProjectBtn = document.createElement("button");
+    addProjectBtn.textContent = "➕";
+
+    const toggleProjectsBtn = document.createElement("button");
+    toggleProjectsBtn.textContent = "⬆️";
+
+    myProjectsContainer.appendChild(Object.assign(document.createElement("p"), {textContent: "My Projects"}));
+    myProjectsContainer.appendChild(addProjectBtn);
+    myProjectsContainer.appendChild(toggleProjectsBtn);
+
+    const projectsContainer = document.createElement("div");
+    projectsContainer.classList.add("projects-container");
+
+    projects.forEach((project) => {
+        projectsContainer.appendChild(createProject(project));
+    });
+
+    projectsFilterContainer.appendChild(myProjectsContainer);
+    projectsFilterContainer.appendChild(projectsContainer);
 
     navigationContainer.appendChild(mainFilterContainer);
     navigationContainer.appendChild(projectsFilterContainer);
@@ -135,8 +183,7 @@ function renderContentView(filterTitle, tasksArray, isProject = false) {
     addTaskBtn.classList.add("add-task-btn");
     addTaskBtn.textContent = "➕";
 
-    const todosContainer = createTodosContainer(tasksArray);
-
+    const todosContainer = createTodosContainer(tasksArray, isProject, filterTitle);
     
     header.appendChild(title);
     header.appendChild(addTaskBtn);
