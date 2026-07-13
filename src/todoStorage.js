@@ -25,7 +25,7 @@ function createTODO(title, description, dueDate, priority) { // due dates and pr
         description, // String/Text
         isComplete, // Boolean
         dueDate, // String
-        priority // Number
+        priority // String
     };
 }
 

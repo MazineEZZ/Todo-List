@@ -19,7 +19,8 @@ body {
     gap: 10px;
 }
 
-.modal-container dialog form div:has([id*="title"]), dialog form div:has([id*="desc"]) {
+.modal-container dialog form div:has([id*="title"]),
+dialog form div:has([id*="desc"]) {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -33,14 +34,19 @@ body {
     resize: none;
 }
 
-.modal-container dialog form div:has([id*="dueDate"]) {
+.modal-container dialog form div:has([id*="task-dueDate"]),
+.modal-container dialog form div:has([id*="task-priority"]) {
     display: flex;
     gap: 10px;
+    justify-content: space-between;
 }
 
-.modal-container dialog #add-task-dueDate {
+.modal-container dialog [id*="task-dueDate"],
+.modal-container dialog [id*="task-priority"] {
     display: flex;
-    justify-content: space-around;
+    justify-content: space-between;
+    flex: 1;
+    gap: 10px;
 }
 
 .modal-container dialog .modal-button-container {
@@ -50,7 +56,7 @@ body {
     margin-top: 20px;
 }
 
-.modal-container .dueDate-option.selected {
+.modal-container .selected {
     border: 2px solid blue;
 }
 
