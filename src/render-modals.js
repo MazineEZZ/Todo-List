@@ -196,7 +196,7 @@ function renderTaskModal(type, title, taskId = "", taskTitle = "", taskDescripti
     return taskModal;
 }
 
-function renderProjectModal(type, title, description, projectId = "", projectTitle, projectDescription) {
+function renderProjectModal(type, title, projectId = "", projectTitle = "", projectDescription = "") {
     const projectModal = renderModalContainer("project", type, projectId);
 
     const modalTitle = renderModalTitle(title);

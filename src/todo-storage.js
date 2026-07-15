@@ -18,7 +18,7 @@ let tasksArray = [
 loadTasks();
 saveTasks();
 
-function createTODO(title, description, dueDate, priority, project) { // due dates and priorities come later
+function createTODO(title, description, dueDate, priority, projectId) { // due dates and priorities come later
     const id = crypto.randomUUID()
     const isComplete = false;
     return {
@@ -28,15 +28,17 @@ function createTODO(title, description, dueDate, priority, project) { // due dat
         isComplete, // Boolean
         dueDate, // String
         priority, // String
-        project,
+        projectId, // Project ID
     };
 }
 
-function addTODO(title, description, dueDate, priority, project) {
-    const task = createTODO(title, description, dueDate, priority, project.toLowerCase())
+function addTODO(title, description, dueDate, priority, projectId) {
+    const task = createTODO(title, description, dueDate, priority, projectId)
     tasksArray.push(task);
 
     saveTasks();
+
+    return task;
 }
 
 function deleteTODO(id) {

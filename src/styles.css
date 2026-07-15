@@ -100,8 +100,8 @@ dialog form div:has([id*="desc"]) {
     border-radius: 1px;
     padding: 2px;
 }
-.my-projects p {
-    flex-grow: 0.9;
+.my-projects p, .project-tab p {
+    width: 90%;
 }
 .projects-container {
     display: flex;

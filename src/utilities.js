@@ -59,4 +59,11 @@ function toggleSelectedTab(tab) {
     toggleSelectedElements(tab, ".tab");
 }
 
-export { pad, getDate, toggleSelectedOption, getDueDateOption, toggleSelectedTab }
+function capitalize(word) {
+    const firstLetter = word.slice(0, 1).toUpperCase();
+    const rest = word.slice(1).toLowerCase();
+
+    return firstLetter + rest;
+}
+
+export { pad, getDate, toggleSelectedOption, getDueDateOption, toggleSelectedTab, capitalize }

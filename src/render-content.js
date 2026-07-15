@@ -1,7 +1,9 @@
+import { capitalize } from "./utilities";
+
 function createTitle(filterTitle) {
     const title = document.createElement("h1");
     title.classList.add("title");
-    title.textContent = filterTitle;
+    title.textContent = capitalize(filterTitle);
 
     return title;
 }
@@ -61,18 +63,18 @@ function createTodo(task) {
     return taskElement;
 }
 
-function createTodosContainer(tasksArray, isProject, projectName) {
+function createTodosContainer(tasksArray, project) {
     const todosContainer = document.createElement("ul");
     todosContainer.classList.add("tasks-container");
     
     tasksArray.forEach(task => {
         if (!task.isComplete) {
-            if (isProject) {
-                if (task.project !== "inbox" && task.project === projectName.toLowerCase()) {
+            if (project) {
+                if (task.projectId !== "inbox" && task.projectId === project.id) {
                     todosContainer.appendChild(createTodo(task));
                 }
             } else {
-                if (task.project === "inbox") {
+                if (task.projectId === "inbox") {
                     todosContainer.appendChild(createTodo(task));
                 }
             }
@@ -85,17 +87,22 @@ function createTodosContainer(tasksArray, isProject, projectName) {
 function createProject(project) {
     const projectContainer = document.createElement("div");
     projectContainer.classList.add("project-tab", "tab");
-    projectContainer.id = project.id;
-    projectContainer.dataset.id = project.name;
+    projectContainer.dataset.id = project.id;
+    projectContainer.dataset.title = project.title;
 
     const projectName = document.createElement("p");
-    projectName.textContent = "# " + project.name;
+    projectName.textContent = "# " + capitalize(project.title);
+
+    const projectEditBtn = document.createElement("button");
+    projectEditBtn.classList.add("edit-project-btn");
+    projectEditBtn.textContent = "✏️";
 
     const projectDeleteBtn = document.createElement("button");
-    projectDeleteBtn.classList.add("project-delete-btn");
+    projectDeleteBtn.classList.add("delete-project-btn");
     projectDeleteBtn.textContent = "🗑️";
 
     projectContainer.appendChild(projectName);
+    projectContainer.appendChild(projectEditBtn);
     projectContainer.appendChild(projectDeleteBtn);
 
     return projectContainer;
@@ -120,13 +127,15 @@ function renderSidebar(projects) {
     mainFilterContainer.classList.add("main-filter");
 
     const inboxContainer = document.createElement("button");
-    inboxContainer.classList.add("inbox", "filter", "loaded-page", "tab");
+    inboxContainer.classList.add("inbox", "filter", "tab");
     inboxContainer.textContent = "📩 Inbox";
+    inboxContainer.dataset.title = "inbox";
     inboxContainer.dataset.id = "inbox";
 
     const todayContainer = document.createElement("button");
     todayContainer.classList.add("today", "filter", "tab");
     todayContainer.textContent = "⭐ Today";
+    todayContainer.dataset.title = "today";
     todayContainer.dataset.id = "today";
 
     mainFilterContainer.appendChild(inboxContainer);
@@ -172,7 +181,7 @@ function renderSidebar(projects) {
     return sidebarWrapper;
 }
 
-function renderContentView(filterTitle, tasksArray, projectDescription) {
+function renderContentView(filterTitle, tasksArray, project = false) {
     const contentWrapper = document.createElement("div");
     contentWrapper.classList.add("content-view");
     contentWrapper.id = "main-content";
@@ -187,16 +196,16 @@ function renderContentView(filterTitle, tasksArray, projectDescription) {
     addTaskBtn.classList.add("add-task-btn");
     addTaskBtn.textContent = "➕";
 
-    const todosContainer = createTodosContainer(tasksArray, isProject, filterTitle);
+    const todosContainer = createTodosContainer(tasksArray, project);
     
     header.appendChild(title);
     header.appendChild(addTaskBtn);
 
     contentWrapper.appendChild(header);
 
-    if (projectDescription) {
+    if (project.description) {
         const projectDescription = document.createElement("p");
-        projectDescription.textContent = "Project description goes here...";
+        projectDescription.textContent = project.description;
         contentWrapper.appendChild(projectDescription);
     }
     

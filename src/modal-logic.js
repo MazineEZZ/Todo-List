@@ -32,6 +32,8 @@ function updateDetails(id, newObj, type) {
     } else if (type == "project") {
         updateProjectsArray();
     }
+
+    console.log(obj);
 }
 
 function getModalDetails(type, subtype) {
@@ -56,6 +58,7 @@ function getModalDetails(type, subtype) {
 
 function editObj(id, type, subtype) {
     const detailsObj = getModalDetails(type, subtype);
+    detailsObj.id = id;
 
     if (detailsObj.title.trim() === "") {
         alert(`${type} title cannot be empty!`);
@@ -63,7 +66,7 @@ function editObj(id, type, subtype) {
     }
 
     updateDetails(id, detailsObj, type);
-    return detailsObj
+    return detailsObj;
 }
 
 export { getModalDetails, updateDetails, removeModal, appendModal, editObj };
