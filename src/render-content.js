@@ -141,9 +141,13 @@ function renderSidebar(projects) {
 
     const addProjectBtn = document.createElement("button");
     addProjectBtn.textContent = "➕";
+    addProjectBtn.id = "add-project";
+    addProjectBtn.classList.add("add-project-btn");
 
     const toggleProjectsBtn = document.createElement("button");
     toggleProjectsBtn.textContent = "⬆️";
+    toggleProjectsBtn.id = "list-projects";
+    toggleProjectsBtn.classList.add("list-projects-btn");
 
     myProjectsContainer.appendChild(Object.assign(document.createElement("p"), {textContent: "My Projects"}));
     myProjectsContainer.appendChild(addProjectBtn);
@@ -168,7 +172,7 @@ function renderSidebar(projects) {
     return sidebarWrapper;
 }
 
-function renderContentView(filterTitle, tasksArray, isProject = false) {
+function renderContentView(filterTitle, tasksArray, projectDescription) {
     const contentWrapper = document.createElement("div");
     contentWrapper.classList.add("content-view");
     contentWrapper.id = "main-content";
@@ -190,7 +194,7 @@ function renderContentView(filterTitle, tasksArray, isProject = false) {
 
     contentWrapper.appendChild(header);
 
-    if (isProject) {
+    if (projectDescription) {
         const projectDescription = document.createElement("p");
         projectDescription.textContent = "Project description goes here...";
         contentWrapper.appendChild(projectDescription);

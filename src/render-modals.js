@@ -1,45 +1,94 @@
 import { getDueDateOption, pad } from "./utilities";
 
-function renderModal(type, title, taskId = "", taskTitle = "", taskDescription = "", taskDueDate = "", taskPriority="") {
-    const taskModal = document.createElement("dialog");
-    taskModal.id = `${type}-task-modal`;
-    taskModal.classList.add(`${type}-task-dialog`);
-    taskModal.dataset.id = taskId;
-    taskModal.dataset.type = type;
-    
+function renderModalTitle(title) {
     const modalTitle = document.createElement("h1");
     modalTitle.classList.add("modal-title");
     modalTitle.textContent = title;
+
+    return modalTitle;
+}
+
+function renderModalMetadata(type, subtype, title = "", description = "") {
+    // TITLE
+    const titleContainer = document.createElement("div");
+    
+    const titleLabel = document.createElement("label");
+    titleLabel.textContent = "Title:";
+    titleLabel.htmlFor = `${subtype}-${type}-title`;
+    
+    const titleInput = document.createElement("input");
+    titleInput.value = title;
+    titleInput.id = `${subtype}-${type}-title`;
+    
+    titleContainer.appendChild(titleLabel);
+    titleContainer.appendChild(titleInput);
+    
+    // DESCRIPTION
+    const descriptionContainer = document.createElement("div");
+    
+    const descriptionLabel = document.createElement("label");
+    descriptionLabel.htmlFor = `${subtype}-${type}-desc`;
+    descriptionLabel.textContent = "Description:";
+    
+    const descriptionInput = document.createElement("textarea");
+    descriptionInput.id = `${subtype}-${type}-desc`;
+    descriptionInput.value = description;
+    
+    descriptionContainer.appendChild(descriptionLabel);
+    descriptionContainer.appendChild(descriptionInput);
+
+    return { titleContainer, descriptionContainer }
+}
+
+function renderModalButtons(subtype) {
+    const buttonContainer = document.createElement("div");
+    buttonContainer.classList.add("modal-button-container");
+
+    const cancelBtn = document.createElement("button");
+    cancelBtn.id = "cancel-modal";
+    cancelBtn.textContent = "Cancel";
+    cancelBtn.classList.add("cancel-modal-btn");
+    
+    buttonContainer.appendChild(cancelBtn);
+
+    let acceptBtn;
+    if (subtype == "edit") {
+        acceptBtn = document.createElement("button");
+        acceptBtn.id = "save-modal-content";
+        acceptBtn.classList.add("save-modal-btn");
+        acceptBtn.textContent = "Save";
+    } else if (subtype == "add") {
+        acceptBtn = document.createElement("button");
+        acceptBtn.id = "add-modal-content";
+        acceptBtn.classList.add("add-modal-btn");
+        acceptBtn.textContent = "Add";
+    }
+    
+    buttonContainer.appendChild(acceptBtn);
+
+    return buttonContainer;
+}
+
+function renderModalContainer(type, subtype, id="") {
+    const modal = document.createElement("dialog");
+    modal.id = `${subtype}-${type}-modal`;
+    modal.classList.add(`${subtype}-${type}-dialog`);
+    modal.dataset.id = id;
+    modal.dataset.type = type;
+    modal.dataset.subtype = subtype;
+
+    return modal;
+}
+
+function renderTaskModal(type, title, taskId = "", taskTitle = "", taskDescription = "", taskDueDate = "", taskPriority="") {
+    const taskModal = renderModalContainer("task", type, taskId);
+    
+    const modalTitle = renderModalTitle(title);
     
     const form = document.createElement("form");
 
-    // TITLE
-    const titleContainer = document.createElement("div");
-
-    const titleLabel = document.createElement("label");
-    titleLabel.textContent = "Title:";
-    titleLabel.htmlFor = `${type}-task-title`;
-    
-    const titleInput = document.createElement("input");
-    titleInput.id = `${type}-task-title`;
-    titleInput.value = taskTitle;
-
-    titleContainer.appendChild(titleLabel);
-    titleContainer.appendChild(titleInput);
-
-    // DESCRIPTION
-    const descriptionContainer = document.createElement("div");
-
-    const descriptionLabel = document.createElement("label");
-    descriptionLabel.textContent = "Description:";
-    descriptionLabel.htmlFor = `${type}-task-desc`;
-
-    const descriptionInput = document.createElement("textarea");
-    descriptionInput.id = `${type}-task-desc`;
-    descriptionInput.value = taskDescription;
-
-    descriptionContainer.appendChild(descriptionLabel);
-    descriptionContainer.appendChild(descriptionInput);
+    // TITLE & CONTAINER
+    const { titleContainer, descriptionContainer } = renderModalMetadata("task", type, taskTitle, taskDescription);
 
     // DUE DATE
     const dueDateContainer = document.createElement("div");
@@ -133,30 +182,7 @@ function renderModal(type, title, taskId = "", taskTitle = "", taskDescription =
     priorityContainer.appendChild(priorityOptions);
     
     // BUTTONS
-    const buttonContainer = document.createElement("div");
-    buttonContainer.classList.add("modal-button-container");
-
-    const cancelBtn = document.createElement("button");
-    cancelBtn.id = "cancel-modal";
-    cancelBtn.textContent = "Cancel";
-    cancelBtn.classList.add("cancel-modal-btn");
-    
-    buttonContainer.appendChild(cancelBtn);
-
-    let acceptBtn;
-    if (type == "edit") {
-        acceptBtn = document.createElement("button");
-        acceptBtn.id = "save-modal-content";
-        acceptBtn.classList.add("save-modal-btn");
-        acceptBtn.textContent = "Save";
-    } else if (type == "add") {
-        acceptBtn = document.createElement("button");
-        acceptBtn.id = "add-modal-content";
-        acceptBtn.classList.add("add-modal-btn");
-        acceptBtn.textContent = "Add";
-    }
-    
-    buttonContainer.appendChild(acceptBtn);
+    const buttonContainer = renderModalButtons(type);
 
     form.appendChild(titleContainer);
     form.appendChild(descriptionContainer);
@@ -170,12 +196,41 @@ function renderModal(type, title, taskId = "", taskTitle = "", taskDescription =
     return taskModal;
 }
 
+function renderProjectModal(type, title, description, projectId = "", projectTitle, projectDescription) {
+    const projectModal = renderModalContainer("project", type, projectId);
+
+    const modalTitle = renderModalTitle(title);
+
+    const form = document.createElement("form");
+
+    const { titleContainer, descriptionContainer } = renderModalMetadata("project", type, projectTitle, projectDescription);
+
+    const buttonContainer = renderModalButtons(type);
+
+    form.appendChild(titleContainer);
+    form.appendChild(descriptionContainer);
+    form.appendChild(buttonContainer);
+
+    projectModal.appendChild(modalTitle);
+    projectModal.appendChild(form);
+
+    return projectModal;
+}
+
 function renderEditTaskModal(taskId, taskTitle, taskDescription, taskDueDate, taskPriority) {
-    return renderModal("edit", "Edit Task", taskId, taskTitle, taskDescription, taskDueDate, taskPriority);
+    return renderTaskModal("edit", "Edit Task", taskId, taskTitle, taskDescription, taskDueDate, taskPriority);
 }
 
 function renderAddTaskModal() {
-    return renderModal("add", "Add Task");
+    return renderTaskModal("add", "Add Task");
 }
 
-export {renderEditTaskModal, renderAddTaskModal}
+function renderEditProjectModal(projectId, projectTitle, projectDescription) {
+    return renderProjectModal("edit", "Edit Project", projectId, projectTitle, projectDescription);
+}
+
+function renderAddProjectModal() {
+    return renderProjectModal("add", "Add Project");
+}
+
+export {renderEditTaskModal, renderAddTaskModal, renderAddProjectModal, renderEditProjectModal}

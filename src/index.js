@@ -1,55 +1,33 @@
 import { pad, getDate, toggleSelectedOption, getDueDateOption, toggleSelectedTab } from "./utilities.js"
-import { tasksArray, addTODO, deleteTODO, setTODOAsComplete, getTaskById, updateTasksArray } from "./todoStorage.js";
-import { projectsArray, addProject, getProjectById } from "./projectStorage.js";
-import { renderSidebar, renderContentView, renderEditTaskModal, renderAddTaskModal } from "./renderHub.js";
+import { tasksArray, addTODO, deleteTODO, setTODOAsComplete, getTaskById, updateTasksArray } from "./todo-storage.js";
+import { projectsArray, addProject, getProjectById } from "./project-storage.js";
+import { removeModal, appendModal, editObj, getModalDetails } from "./modal-logic.js";
+import { renderSidebar, renderContentView, renderEditTaskModal, renderAddTaskModal, renderAddProjectModal, renderEditProjectModal } from "./render-hub.js";
 import "./reset.css"
 import "./styles.css";
 
-function refreshPage() {
-    const tabName = getCurrentTab().dataset.id;
+function refreshPage(projectId false) {
     const appContainer = document.querySelector("#app-container");
-    appContainer.removeChild(appContainer.querySelector("#main-content"));
 
-    const contentView = renderContentView(tabName, tasksArray, isProjectTab());
-
-    appContainer.appendChild(contentView);
-}
-
-function appendModal(modal) {
-    const modalContainer = document.querySelector("#modal-container");
-    modalContainer.appendChild(modal);
-    modal.showModal();
-}
-
-function removeModal(modal) {
-    const modalContainer = document.querySelector("#modal-container");
-    modal.close();
-    modalContainer.replaceChildren();
-}
-
-function updateTaskDetails(id, newTask) {
-    const task = getTaskById(id);
+    const selectedTab = getCurrentTab();
     
-    task.title = newTask.title;
-    task.description = newTask.description;
-    task.dueDate = newTask.dueDate;
-    task.priority = newTask.priority;
+    appContainer.replaceChildren();
+    
+    const sidebar = renderSidebar(projectsArray);
+    
+    if (projectId) {
+        // Exact Match Selector for id, to prevent a bug that has to do with a selector starting with a number
+        const projectDOM = sidebar.querySelector(`#[id=${project.id}]`);
+        toggleSelectedTab(projectDOM);
+    } else {
+        toggleSelectedTab(sidebar.querySelector(`[data-id=${selectedTab.dataset.id}]`));
+    }
 
-    updateTasksArray();
-}
+    const tabName = selectedTab.dataset.id;
+    const contentView = renderContentView(tabName, tasksArray, project.description);
 
-function getModalTaskDetails(type) {
-    const titleInput = document.querySelector(`#${type}-task-title`);
-    const descriptionInput = document.querySelector(`#${type}-task-desc`);
-    const dueDateOption = document.querySelector(`#${type}-task-dueDate>.selected`);
-    const priorityOption = document.querySelector(`#${type}-task-priority>.selected`)
-
-    const title = titleInput.value;
-    const description = descriptionInput.value;
-    const dueDate = getDate(dueDateOption.id);
-    const priority = priorityOption.id.split("-")[0];
-
-    return { title, description, dueDate, priority };
+    appContainer.appendChild(sidebar);
+    appContainer.appendChild(contentView);
 }
 
 function addNewTask(task) {
@@ -62,12 +40,21 @@ function addNewTask(task) {
     );
 }
 
+function addNewProject(project) {
+    addProject(
+        project.title,
+        project.description,
+    );
+}
+
 function getCurrentTab() {
     return document.querySelector(".navigation .selected");
 }
 
-function isProjectTab() {
-    console.log(getCurrentTab().classList)
+function isProjectTab(element) { 
+    if (element) {
+        return Array.from(element.classList).includes("project-tab");
+    }
     return Array.from(getCurrentTab().classList).includes("project-tab");
 }
 
@@ -75,19 +62,16 @@ function setUpEventListeners(appContainer, modalContainer) {
     appContainer.addEventListener("click", (e) => {
         if (e.target.classList.contains("delete-btn")) {
             const taskId = e.target.closest(".task-item").dataset.id;
-            const tabName = getCurrentTab().dataset.id
 
             deleteTODO(taskId);
             refreshPage();
-        }
-
+        
         if (e.target.classList.contains("mark-complete-btn")) {
             const taskId = e.target.closest(".task-item").dataset.id;
 
             setTODOAsComplete(taskId);
             refreshPage();
         }
-        
         if (e.target.classList.contains("edit-task-btn")) {
             const taskId = e.target.closest(".task-item").dataset.id;
             const task = getTaskById(taskId);
@@ -101,53 +85,62 @@ function setUpEventListeners(appContainer, modalContainer) {
         if (e.target.classList.contains("tab")) {
             toggleSelectedTab(e.target);
             refreshPage();
+        
+        if (e.target.classList.contains("add-project-btn")) {
+            appendModal(renderAddProjectModal())
         }
     });
 
     modalContainer.addEventListener("click" , (e) => {
         if (e.target.classList.contains("cancel-modal-btn")) {
-            const taskModal = e.target.closest("[id$=task-modal]");
-            const type = taskModal.dataset.type;
-            const taskId = taskModal.dataset.id; 
+            e.preventDefault();
+            const modal = e.target.closest("[id$=-modal][class$=-dialog]");
+            const type = modal.dataset.type;
+            const subtype = modal.dataset.subtype;
             
-            removeModal(e.target.closest(`.${type}-task-dialog`));
+            removeModal(e.target.closest(`.${subtype}-${type}-dialog`));
         }
         
         if (e.target.classList.contains("save-modal-btn")) {
             e.preventDefault();
-            const taskModal = e.target.closest("[id$=task-modal]");
-            const type = taskModal.dataset.type;
-            const taskId = taskModal.dataset.id;
-
-            const taskDetails = getModalTaskDetails(type);
-
-            if (taskDetails.title.trim() === "") {
-                alert("Task Title cannot be empty!");
+            const modal = e.target.closest("[id$=-modal][class$=-dialog]");
+            const type = modal.dataset.type;
+            const subtype = modal.dataset.subtype;
+            const id = modal.dataset.id;
+            const detailsObj = editObj(id, type, subtype);
+            
+            if (detailsObj.title.trim() === "") {
                 return;
             }
             
-            updateTaskDetails(taskId, taskDetails);
-            removeModal(taskModal);
+            removeModal(modal);
             refreshPage();
-        }
-
+        
         if (e.target.classList.contains("add-modal-btn")) {
             e.preventDefault();
             const tabName = getCurrentTab().dataset.id;
-            const taskModal = e.target.closest("[id$=task-modal]");
-            const type = taskModal.dataset.type;
-            const newTask = getModalTaskDetails(type);
-            console.log(document.querySelector(".selected"));
-            newTask.project = tabName;
-            
-            if (newTask.title.trim() === "") {
+            const modal = e.target.closest("[id$=-modal][class$=-dialog]");
+            const type = modal.dataset.type;
+            const subtype = modal.dataset.subtype;
+            const newObj = getModalDetails(type, subtype);
+
+            if (newObj.title.trim() === "") {
                 alert("Task Title cannot be empty!");
                 return;
             }
             
-            removeModal(taskModal);
-            addNewTask(newTask);
-            refreshPage();
+            removeModal(modal);
+
+            if (type == "task") {
+                newObj.project = tabName;
+                
+                addNewTask(newObj);
+                refreshPage();
+            } else if (type == "project") {
+                addNewProject(newObj);
+                refreshPage(newObj)
+            }
+            
         }
 
         if (e.target.classList.contains("dueDate-option")) {
@@ -178,8 +171,11 @@ function initializeApp() {
     appContainer.setAttribute("id", "app-container");
     
     const sidebar = renderSidebar(projectsArray);
-    const contentView = renderContentView("Inbox", tasksArray, true);
-
+    const contentView = renderContentView("inbox", tasksArray);
+    
+    const defaultTab = sidebar.querySelector('[data-id="inbox"]');
+    toggleSelectedTab(defaultTab);
+    
     setUpEventListeners(appContainer, modalContainer);
     
     appContainer.appendChild(sidebar);

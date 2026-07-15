@@ -1,4 +1,13 @@
-let projectsArray = [{id: crypto.randomUUID(), name: "Family"}, {id: crypto.randomUUID(), name: "School"}];
+let projectsArray = [
+    {
+        id: crypto.randomUUID(),
+        name: "Family"
+    }, 
+    {
+        id: crypto.randomUUID(),
+        name: "School"
+    }
+];
 
 function createProject(name, description) {
     return {
@@ -17,4 +26,8 @@ function getProjectById(id) {
     return projectsArray.find(project => project.id === id);
 }
 
-export { projectsArray, addProject, getProjectById };
+function updateProjectsArray() {
+    return;
+}
+
+export { projectsArray, addProject, getProjectById, updateProjectsArray };
