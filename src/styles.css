@@ -101,7 +101,7 @@ dialog form div:has([id*="desc"]) {
     padding: 2px;
 }
 .my-projects p, .project-tab p {
-    width: 90%;
+    width: 80%;
 }
 .projects-container {
     display: flex;

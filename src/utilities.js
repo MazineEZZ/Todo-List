@@ -34,6 +34,10 @@ function toggleSelectedOption(option, type) {
     toggleSelectedElements(option, `.${type}-option`);
 }
 
+function getCurrentTab() {
+    return document.querySelector(".navigation .selected");
+}
+
 /**
  * Returns a data preset by comparing a given date with today and tomorrow dates
  */
@@ -66,4 +70,11 @@ function capitalize(word) {
     return firstLetter + rest;
 }
 
-export { pad, getDate, toggleSelectedOption, getDueDateOption, toggleSelectedTab, capitalize }
+function isProjectTab(element = false) { 
+    if (element) {
+        return Array.from(element.classList).includes("project-tab");
+    }
+    return Array.from(getCurrentTab().classList).includes("project-tab");
+}
+
+export { pad, getDate, toggleSelectedOption, getDueDateOption, toggleSelectedTab, capitalize, getCurrentTab, isProjectTab }

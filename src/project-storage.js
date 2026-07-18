@@ -1,3 +1,5 @@
+import { deleteProjectTasks } from "./todo-storage";
+
 let projectsArray = [
     {
         id: crypto.randomUUID(),
@@ -20,13 +22,11 @@ function createProject(title, description) {
     }
 }
 
-function addProject(title, description) {
-    const project = createProject(title.toLowerCase(), description);
+function addProject(obj) {
+    const project = createProject(obj.title.toLowerCase(), obj.description);
     projectsArray.push(project);
 
     saveProject();
-
-    return project;
 }
 
 function getProjectById(id) {
@@ -38,6 +38,8 @@ function deleteProject(id) {
     
     projectsArray.length = 0;
     projectsArray.push(...remainingProjects)
+
+    deleteProjectTasks(id);
 
     saveProject();
 }

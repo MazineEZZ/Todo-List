@@ -32,13 +32,11 @@ function createTODO(title, description, dueDate, priority, projectId) { // due d
     };
 }
 
-function addTODO(title, description, dueDate, priority, projectId) {
-    const task = createTODO(title, description, dueDate, priority, projectId)
+function addTODO(obj) {
+    const task = createTODO(obj.title, obj.description, obj.dueDate, obj.priority, obj.projectId)
     tasksArray.push(task);
 
     saveTasks();
-
-    return task;
 }
 
 function deleteTODO(id) {
@@ -83,4 +81,8 @@ function loadTasks() {
     return;
 }
 
-export { tasksArray, addTODO, deleteTODO, setTODOAsComplete, getTaskById, updateTasksArray };
+function deleteProjectTasks(id) {
+    tasksArray.forEach(task =>  task.id === id ? deleteTODO(task) : "");
+}
+
+export { tasksArray, addTODO, deleteTODO, setTODOAsComplete, getTaskById, updateTasksArray, deleteProjectTasks };

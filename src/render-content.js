@@ -214,4 +214,15 @@ function renderContentView(filterTitle, tasksArray, project = false) {
     return contentWrapper;
 }
 
+function renderTodayTab(tasksArray) {
+    const todayWrapper = document.createElement("div");
+    todayWrapper.classList.add("today-container");
+
+    for (let i = 0; i < 3; i++) {
+        const taskDateContainer = document.createElement("div");
+        taskDateContainer.classList.add("today")
+    }
+    
+}
+
 export {renderSidebar, renderContentView};

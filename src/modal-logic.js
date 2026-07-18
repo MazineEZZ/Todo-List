@@ -60,11 +60,6 @@ function editObj(id, type, subtype) {
     const detailsObj = getModalDetails(type, subtype);
     detailsObj.id = id;
 
-    if (detailsObj.title.trim() === "") {
-        alert(`${type} title cannot be empty!`);
-        return;
-    }
-
     updateDetails(id, detailsObj, type);
     return detailsObj;
 }
