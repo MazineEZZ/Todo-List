@@ -77,7 +77,7 @@ function deleteObjBtn(target, refreshPage) {
         const task = target.closest(".task-item");
         id = task.dataset.id;
         deleteTODO(id);
-        refresher();
+        refresher(refreshPage);
     } else if (target.closest(".project-tab")) {
         const project = target.closest(".project-tab");
         id = project.dataset.id;
