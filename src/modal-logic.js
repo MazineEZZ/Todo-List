@@ -47,7 +47,11 @@ function getModalDetails(type, subtype) {
         const dueDateOption = document.querySelector(`#${subtype}-${type}-dueDate>.selected`);
         const priorityOption = document.querySelector(`#${subtype}-${type}-priority>.selected`)
 
-        const dueDate = getDate(dueDateOption.id);
+        let dueDate;
+        dueDate = dueDateOption.value;
+        if (dueDateOption.id !== "pick-option") {
+            dueDate = getDate(dueDateOption.id);
+        }
         const priority = priorityOption.id.split("-")[0];
 
         return { title, description, dueDate, priority };

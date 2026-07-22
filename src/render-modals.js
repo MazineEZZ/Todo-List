@@ -112,10 +112,9 @@ function renderTaskModal(type, title, taskId = "", taskTitle = "", taskDescripti
     dueDateTomorrow.type = "button";
     dueDateTomorrow.classList.add("dueDate-option");
     
-    const dueDatePick = document.createElement("button");
-    dueDatePick.id = "pick-option";  
-    dueDatePick.textContent = "Pick a Date";
-    dueDatePick.type = "button";
+    const dueDatePick = document.createElement("input");
+    dueDatePick.type = "date"
+    dueDatePick.id = "pick-option";
     dueDatePick.classList.add("dueDate-option");
     
     dueDateOptions.appendChild(dueDateToday);

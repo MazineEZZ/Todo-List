@@ -1,4 +1,5 @@
 import { capitalize } from "./utilities";
+import { sortByDate } from "./todo-storage";
 
 function createTitle(filterTitle) {
     const title = document.createElement("h1");
@@ -63,22 +64,29 @@ function createTodo(task) {
     return taskElement;
 }
 
-function createTodosContainer(tasksArray, project) {
+function createTodosContainer(tasksArray, project = false) {
     const todosContainer = document.createElement("ul");
     todosContainer.classList.add("tasks-container");
-    
     tasksArray.forEach(task => {
-        if (!task.isComplete) {
-            if (project) {
-                if (task.projectId !== "inbox" && task.projectId === project.id) {
-                    todosContainer.appendChild(createTodo(task));
-                }
-            } else {
-                if (task.projectId === "inbox") {
-                    todosContainer.appendChild(createTodo(task));
-                }
+        if (task.isComplete) return;
+
+        if (project === "all") {
+            if (task.projectId !== "inbox") {
+                todosContainer.appendChild(createTodo(task));
             }
+            return;
         }
+        if (project) {
+            if (task.projectId !== "inbox" && task.projectId === project.id) {
+                todosContainer.appendChild(createTodo(task));
+            }
+            return;
+        }
+        
+        if (task.projectId === "inbox") {
+            todosContainer.appendChild(createTodo(task));
+        }
+
     });
 
     return todosContainer;
@@ -132,14 +140,14 @@ function renderSidebar(projects) {
     inboxContainer.dataset.title = "inbox";
     inboxContainer.dataset.id = "inbox";
 
-    const todayContainer = document.createElement("button");
-    todayContainer.classList.add("today", "filter", "tab");
-    todayContainer.textContent = "⭐ Today";
-    todayContainer.dataset.title = "today";
-    todayContainer.dataset.id = "today";
+    const upcomingContainer = document.createElement("button");
+    upcomingContainer.classList.add("upcoming", "filter", "tab");
+    upcomingContainer.textContent = "📅 Up-coming";
+    upcomingContainer.dataset.title = "upcoming";
+    upcomingContainer.dataset.id = "upcoming";
 
     mainFilterContainer.appendChild(inboxContainer);
-    mainFilterContainer.appendChild(todayContainer);
+    mainFilterContainer.appendChild(upcomingContainer);
 
     // Projects Filter Compartment
     const projectsFilterContainer = document.createElement("div");
@@ -189,6 +197,7 @@ function renderContentView(filterTitle, tasksArray, project = false) {
     const header = document.createElement("div");
     header.classList.add("header");
 
+    // TOP BAR
     const title = createTitle(filterTitle);
 
     const addTaskBtn = document.createElement("button");
@@ -196,14 +205,20 @@ function renderContentView(filterTitle, tasksArray, project = false) {
     addTaskBtn.classList.add("add-task-btn");
     addTaskBtn.textContent = "➕";
 
-    const todosContainer = createTodosContainer(tasksArray, project);
-    
     header.appendChild(title);
     header.appendChild(addTaskBtn);
 
     contentWrapper.appendChild(header);
 
-    if (project.description) {
+    // MAIN BODY
+    let todosContainer;
+    if (filterTitle === "upcoming") {
+        todosContainer = createTodosContainer(sortByDate(tasksArray), "all");
+    } else {
+        todosContainer = createTodosContainer(tasksArray, project);        
+    }
+    
+    if (project && project.description) {
         const projectDescription = document.createElement("p");
         projectDescription.textContent = project.description;
         contentWrapper.appendChild(projectDescription);
@@ -212,17 +227,6 @@ function renderContentView(filterTitle, tasksArray, project = false) {
     contentWrapper.appendChild(todosContainer);
     
     return contentWrapper;
-}
-
-function renderTodayTab(tasksArray) {
-    const todayWrapper = document.createElement("div");
-    todayWrapper.classList.add("today-container");
-
-    for (let i = 0; i < 3; i++) {
-        const taskDateContainer = document.createElement("div");
-        taskDateContainer.classList.add("today")
-    }
-    
 }
 
 export {renderSidebar, renderContentView};

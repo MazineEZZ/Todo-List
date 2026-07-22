@@ -4,14 +4,14 @@ let tasksArray = [
         title: "Go grocery shopping",
         description: "Buy milk, eggs, and vegetables",
         isComplete: false,
-        project: "inbox"
+        projectId: "inbox"
     },
     {
         id: crypto.randomUUID(),
         title: "Make lunch",
         description: "Vegetable stew",
         isComplete: false,
-        project: "inbox"
+        projectId: "inbox"
     }
 ];
 
@@ -82,7 +82,16 @@ function loadTasks() {
 }
 
 function deleteProjectTasks(id) {
-    tasksArray.forEach(task =>  task.id === id ? deleteTODO(task) : "");
+    tasksArray.forEach(task =>  task.projectId === id ? deleteTODO(task.id) : "");
 }
 
-export { tasksArray, addTODO, deleteTODO, setTODOAsComplete, getTaskById, updateTasksArray, deleteProjectTasks };
+function sortByDate() {
+    return [...tasksArray].sort((a, b) => {
+        let date1 = new Date(a.dueDate);
+        let date2 = new Date(b.dueDate);
+
+        return date1 - date2
+    })
+}
+
+export { tasksArray, addTODO, deleteTODO, setTODOAsComplete, getTaskById, updateTasksArray, deleteProjectTasks, sortByDate };
