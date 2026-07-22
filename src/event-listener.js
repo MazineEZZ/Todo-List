@@ -38,12 +38,7 @@ function modifyModalBtn(target, refreshPage) {
         removeModal(modal);
     }
     
-    if (isProjectTab()) {
-        refreshPage(getProjectById(getCurrentTab().dataset.id));
-        return;
-    }
-    refreshPage();
-    return;
+    refresher(refreshPage)
 }
 
 function cancelModal(target) {
@@ -68,17 +63,21 @@ function editTaskBtn(target) {
     appendModal(renderEditTaskModal(task.id, task.title, task.description, task.dueDate, task.priority));
 }
 
+function refresher(refreshPage) {
+    if (isProjectTab()) {
+        refreshPage(getProjectById(getCurrentTab().dataset.id));
+    } else {
+        refreshPage();
+    }
+}
+
 function deleteObjBtn(target, refreshPage) {
     let id;
     if (target.closest(".task-item")) {
         const task = target.closest(".task-item");
         id = task.dataset.id;
         deleteTODO(id);
-        if (isProjectTab()) {
-            refreshPage(getProjectById(getCurrentTab().dataset.id));
-        } else {
-            refreshPage();
-        }
+        refresher();
     } else if (target.closest(".project-tab")) {
         const project = target.closest(".project-tab");
         id = project.dataset.id;
@@ -115,7 +114,7 @@ export function setUpEventListeners(appContainer, modalContainer, refreshPage) {
         
         if (e.target.classList.contains("mark-complete-btn")) {
             markTaskComplete(e.target);
-            refreshPage()
+            refresher(refreshPage);
         }
         if (e.target.classList.contains("edit-task-btn")) {
             editTaskBtn(e.target);
