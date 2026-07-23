@@ -1,8 +1,8 @@
-import { appendModal, removeModal, updateDetails, getModalDetails, editObj } from "./modal-logic.js";
-import { toggleSelectedOption, toggleSelectedTab, getCurrentTab, capitalize, isProjectTab } from "./utilities.js";
-import { addProject, deleteProject, getProjectById, projectsArray } from "./project-storage.js";
-import { addTODO, deleteTODO, setTODOAsComplete, getTaskById } from "./todo-storage.js";
-import { renderAddProjectModal, renderAddTaskModal, renderEditProjectModal, renderEditTaskModal } from "./render-modals.js";
+import { appendModal, removeModal, updateDetails, getModalDetails, editObj } from "../logic/modal-logic.js";
+import { toggleSelectedOption, toggleSelectedTab, getCurrentTab, capitalize, isProjectTab } from "../utils/utilities.js";
+import { addProject, deleteProject, getProjectById, projectsArray } from "../storage/project-storage.js";
+import { addTODO, deleteTODO, setTODOAsComplete, getTaskById } from "../storage/todo-storage.js";
+import { renderAddProjectModal, renderAddTaskModal, renderEditProjectModal, renderEditTaskModal } from "../dom/render-modals.js";
 
 function modifyModalBtn(target, refreshPage) {
     const tabName = getCurrentTab().dataset.title;

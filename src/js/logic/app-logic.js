@@ -1,8 +1,8 @@
-import { getCurrentTab, toggleSelectedTab } from "./utilities.js";
-import { renderSidebar, renderContentView } from "./render-hub.js";
-import { setUpEventListeners } from "./event-listener.js";
-import { projectsArray } from "./project-storage.js";
-import { tasksArray } from "./todo-storage.js";
+import { getCurrentTab, toggleSelectedTab } from "../utils/utilities.js";
+import { renderSidebar, renderContentView } from "../dom/render-hub.js";
+import { setUpEventListeners } from "../events/event-listener.js";
+import { projectsArray } from "../storage/project-storage.js";
+import { tasksArray } from "../storage/todo-storage.js";
 
 // use a pub/sub functionality
 function refreshPage(project = false) {
@@ -35,7 +35,7 @@ function refreshPage(project = false) {
     appContainer.appendChild(contentView);
 }
 
-function initializeModalContainer() {
+function initModalContainer() {
     const modalContainer = document.createElement("div");
     modalContainer.classList.add("modal-container");
     modalContainer.setAttribute("id", "modal-container");
@@ -45,8 +45,8 @@ function initializeModalContainer() {
     return modalContainer;
 }
 
-function initializeApp() {
-    const modalContainer = initializeModalContainer();
+function initApp() {
+    const modalContainer = initModalContainer();
 
     const appContainer = document.createElement("div");
     appContainer.classList.add("app-container");
@@ -70,4 +70,4 @@ function initializeApp() {
     document.body.appendChild(appContainer);
 }
 
-export { initializeApp }
+export { initApp }

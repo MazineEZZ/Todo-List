@@ -1,5 +1,7 @@
-import { capitalize } from "./utilities";
-import { sortByDate } from "./todo-storage";
+import { capitalize } from "../utils/utilities";
+import { sortByDate } from "../storage/todo-storage";
+
+import { createElement, CalendarDays, Inbox, Plus, ChevronDown, SquarePen, PenLine, Trash2 } from "lucide";
 
 function createTitle(filterTitle) {
     const title = document.createElement("h1");
@@ -98,17 +100,25 @@ function createProject(project) {
     projectContainer.dataset.id = project.id;
     projectContainer.dataset.title = project.title;
 
+    const hashtag = document.createElement("p");
+    hashtag.textContent = "#";
+    hashtag.style.color = "black";
+    hashtag.classList.add("hashtag");
+
     const projectName = document.createElement("p");
-    projectName.textContent = "# " + capitalize(project.title);
+    projectName.textContent = capitalize(project.title);
 
     const projectEditBtn = document.createElement("button");
     projectEditBtn.classList.add("edit-project-btn");
-    projectEditBtn.textContent = "✏️";
+    
+    projectEditBtn.appendChild(createElement(PenLine))
 
     const projectDeleteBtn = document.createElement("button");
     projectDeleteBtn.classList.add("delete-project-btn");
-    projectDeleteBtn.textContent = "🗑️";
+    
+    projectDeleteBtn.appendChild(createElement(Trash2))
 
+    projectContainer.appendChild(hashtag);
     projectContainer.appendChild(projectName);
     projectContainer.appendChild(projectEditBtn);
     projectContainer.appendChild(projectDeleteBtn);
@@ -124,6 +134,7 @@ function renderSidebar(projects) {
     // Profile Compartment
     const profile = document.createElement("div");
     profile.classList.add("profile");
+    profile.textContent = "Img - Profile";
     // TODO: profile elements
 
     // Navigation Compartment
@@ -134,17 +145,31 @@ function renderSidebar(projects) {
     const mainFilterContainer = document.createElement("div");
     mainFilterContainer.classList.add("main-filter");
 
-    const inboxContainer = document.createElement("button");
+    const inboxContainer = document.createElement("div");
     inboxContainer.classList.add("inbox", "filter", "tab");
-    inboxContainer.textContent = "📩 Inbox";
     inboxContainer.dataset.title = "inbox";
     inboxContainer.dataset.id = "inbox";
 
-    const upcomingContainer = document.createElement("button");
+    const inboxTitle = document.createElement("p");
+    inboxTitle.textContent = "Inbox";
+
+    const inboxIcon = createElement(Inbox);
+
+    inboxContainer.appendChild(inboxIcon);
+    inboxContainer.appendChild(inboxTitle);
+
+    const upcomingContainer = document.createElement("div");
     upcomingContainer.classList.add("upcoming", "filter", "tab");
-    upcomingContainer.textContent = "📅 Up-coming";
     upcomingContainer.dataset.title = "upcoming";
     upcomingContainer.dataset.id = "upcoming";
+
+    const upcomingTitle = document.createElement("p");
+    upcomingTitle.textContent = "Upcoming";
+
+    const upcomingIcon = createElement(CalendarDays);
+
+    upcomingContainer.appendChild(upcomingIcon);
+    upcomingContainer.appendChild(upcomingTitle);
 
     mainFilterContainer.appendChild(inboxContainer);
     mainFilterContainer.appendChild(upcomingContainer);
@@ -157,14 +182,16 @@ function renderSidebar(projects) {
     myProjectsContainer.classList.add("my-projects");
 
     const addProjectBtn = document.createElement("button");
-    addProjectBtn.textContent = "➕";
     addProjectBtn.id = "add-project";
     addProjectBtn.classList.add("add-project-btn");
 
+    addProjectBtn.appendChild(createElement(Plus))
+
     const toggleProjectsBtn = document.createElement("button");
-    toggleProjectsBtn.textContent = "⬆️";
     toggleProjectsBtn.id = "list-projects";
     toggleProjectsBtn.classList.add("list-projects-btn");
+
+    toggleProjectsBtn.appendChild(createElement(ChevronDown))
 
     myProjectsContainer.appendChild(Object.assign(document.createElement("p"), {textContent: "My Projects"}));
     myProjectsContainer.appendChild(addProjectBtn);

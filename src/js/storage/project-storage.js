@@ -1,24 +1,28 @@
+import { renderContentView } from "../dom/render-content";
 import { deleteProjectTasks } from "./todo-storage";
 
 let projectsArray = [
     {
         id: crypto.randomUUID(),
-        title: "Family"
+        title: "Family",
+        color: "red"
     }, 
     {
         id: crypto.randomUUID(),
-        title: "School"
+        title: "School",
+        color: "yellow"
     }
 ];
 
 loadProjects();
 saveProject();
 
-function createProject(title, description) {
+function createProject(title, description, color=false) {
     return {
         id: crypto.randomUUID(),
         title,
-        description
+        description,
+        color
     }
 }
 

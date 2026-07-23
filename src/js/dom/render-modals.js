@@ -1,4 +1,4 @@
-import { getDueDateOption, pad } from "./utilities";
+import { getDueDateOption, pad } from "../utils/utilities";
 
 function renderModalTitle(title) {
     const modalTitle = document.createElement("h1");

@@ -1,6 +1,6 @@
-import { getDate } from "./utilities";
-import { getTaskById, updateTasksArray } from "./todo-storage";
-import { getProjectById, updateProjectsArray } from "./project-storage";
+import { getDate } from "../utils/utilities";
+import { getTaskById, updateTasksArray } from "../storage/todo-storage";
+import { getProjectById, updateProjectsArray } from "../storage/project-storage";
 
 function appendModal(modal) {
     const modalContainer = document.querySelector("#modal-container");
