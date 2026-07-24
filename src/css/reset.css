@@ -15,6 +15,12 @@
   }
 }
 
+ul {
+    padding: 0;
+    margin: 0;
+}
+
+
 body {
   /* 4. Increase line-height */
   line-height: 1.5;

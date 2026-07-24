@@ -1,19 +1,39 @@
+/* SIDEBAR */
 button, .tab, .my-projects {
-    background-color: var(--clr-sidebar);
+    background-color: transparent;
     border: none;
     border-radius: 0.3rem;
     transition: 0.05s;
     font-family: var(--font-family);
 }
 
-.tab button {
-    background-color: var(--clr-sidebar)
-}
-
-.project-tab:hover button, .my-projects:hover button {
-    background-color: var(--clr-tab-hover)
-}
-
 .tab button:hover, .my-projects button:hover {
     background-color: var(--clr-btn-hover)
+}
+
+.tab.selected:hover button:hover {
+    background-color: var(--clr-primary-hover);
+}
+
+/* CONTENT */
+
+.task-item button {
+    background-color: transparent;
+}
+
+#circle-hover {
+    display: none;
+}
+
+.mark-complete-btn:hover #circle-hover {
+    display: block;
+}
+
+
+.mark-complete-btn:hover #circle-default {
+    display: none;
+}
+
+.edit-task-btn:hover, .delete-btn:hover {
+    background-color: var(--clr-tab-hover);
 }

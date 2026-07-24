@@ -1,7 +1,7 @@
 import { capitalize } from "../utils/utilities";
 import { sortByDate } from "../storage/todo-storage";
-
-import { createElement, CalendarDays, Inbox, Plus, ChevronDown, SquarePen, PenLine, Trash2 } from "lucide";
+import { PRIORITY_COLORS } from "../global/variables";
+import { createElement, CalendarDays, Inbox, Plus, ChevronDown, SquarePen, PenLine, Trash2, Circle, CirclePlus, CircleCheck } from "lucide";
 
 function createTitle(filterTitle) {
     const title = document.createElement("h1");
@@ -10,6 +10,11 @@ function createTitle(filterTitle) {
 
     return title;
 }
+
+function getPriorityColor(prior) {
+    return PRIORITY_COLORS[prior];
+}
+
 
 function createTodo(task) {
     const id = task.id;
@@ -24,7 +29,15 @@ function createTodo(task) {
 
     const markCompleteBtn = document.createElement("button");
     markCompleteBtn.classList.add("mark-complete-btn");
-    markCompleteBtn.textContent = "✅";
+
+    const circle = createElement(Circle);
+    circle.id = "circle-default";
+    const circleCheck = createElement(CircleCheck);
+    circleCheck.id = "circle-hover";
+    circleCheck.style.color = getPriorityColor(priority);
+
+    markCompleteBtn.appendChild(circle)
+    markCompleteBtn.appendChild(circleCheck)
 
     const taskDetails = document.createElement("div");
     taskDetails.classList.add("details");
@@ -41,22 +54,19 @@ function createTodo(task) {
     taskDueDate.classList.add("dueDate");
     taskDueDate.textContent = dueDate;
 
-    const taskPriority = document.createElement("p");
-    taskPriority.classList.add("priority");
-    taskPriority.textContent = priority;
-
     taskDetails.appendChild(taskTitle);
     taskDetails.appendChild(taskDescription);
     taskDetails.appendChild(taskDueDate);
-    taskDetails.appendChild(taskPriority);
 
     const editTaskBtn = document.createElement("button");
     editTaskBtn.classList.add("edit-task-btn");
-    editTaskBtn.textContent = "✏️";
+
+    editTaskBtn.appendChild(createElement(PenLine))
 
     const deleteTaskBtn = document.createElement("button");
     deleteTaskBtn.classList.add("delete-btn");
-    deleteTaskBtn.textContent = "❌";
+    
+    deleteTaskBtn.appendChild(createElement(Trash2))
 
     taskElement.appendChild(markCompleteBtn);
     taskElement.appendChild(taskDetails);
@@ -75,22 +85,24 @@ function createTodosContainer(tasksArray, project = false) {
         if (project === "all") {
             if (task.projectId !== "inbox") {
                 todosContainer.appendChild(createTodo(task));
+                todosContainer.appendChild(document.createElement("hr"))
             }
             return;
         }
         if (project) {
             if (task.projectId !== "inbox" && task.projectId === project.id) {
                 todosContainer.appendChild(createTodo(task));
+                todosContainer.appendChild(document.createElement("hr"))
             }
             return;
         }
         
         if (task.projectId === "inbox") {
             todosContainer.appendChild(createTodo(task));
+            todosContainer.appendChild(document.createElement("hr"))
         }
-
     });
-
+    todosContainer.removeChild(todosContainer.lastChild)
     return todosContainer;
 }
 
@@ -230,7 +242,8 @@ function renderContentView(filterTitle, tasksArray, project = false) {
     const addTaskBtn = document.createElement("button");
     addTaskBtn.id = "add-task";
     addTaskBtn.classList.add("add-task-btn");
-    addTaskBtn.textContent = "➕";
+
+    addTaskBtn.appendChild(createElement(CirclePlus))
 
     header.appendChild(title);
     header.appendChild(addTaskBtn);

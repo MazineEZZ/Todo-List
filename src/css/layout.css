@@ -55,6 +55,7 @@ body {
 .tab, .my-projects {
     display: flex;
     justify-content: flex-start;
+    align-items: center;
 
     gap: var(--space-xs);
     padding: var(--space-2xs);
@@ -67,6 +68,7 @@ body {
 .my-projects p, .project-tab p {
     width: 80%;
 }
+
 .projects-container {
     display: flex;
     flex-direction: column;
@@ -84,19 +86,46 @@ body {
     flex: 0;
 }
 
+.tab.selected {
+    background-color: var(--clr-primary);
+    color: var(--clr-text-primary);
+    transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+
 /* SVG */
 svg {
-  stroke-width: 1.5px;
+    stroke-width: 1.5px;
+    pointer-events: none;
 }
 
 .filter svg {
     width: 1.25em;
 }
 
+#add-task svg {
+    width: 2em;
+    height: auto;
+    color: var(--clr-primary);
+    filter: drop-shadow(var(--drop-shadow-sm));
+    transition: 0.2s;
+}
+
+#add-task svg:hover {
+    height: auto;
+    filter: drop-shadow(var(--drop-shadow-md));
+}
+
+.task-item svg {
+    width: 1.2rem;
+}
 
 /* * CONTENT */
 .content-view {
-    padding: 20px;
+    padding: 3em clamp(4rem, 8vw, 10rem);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-lg);
 }
 
 .content-view .header {
@@ -104,16 +133,23 @@ svg {
     justify-content: space-between;
 }
 
-.content-view .tasks-container {
-    padding: 0px 100px;
+.content-view .title {
+    font-size: var(--fs-xl);
+    color: var(--clr-text-main);
 }
 
+ul.tasks-container {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+}
 
 .content-view .task-item {
     display: flex;
     justify-content: space-between;
+    align-items: flex-start;
 
-    gap: 20px;
+    gap: var(--space-2xs);
 }
 
 .content-view .task-item .details {
@@ -123,10 +159,17 @@ svg {
 }
 
 .content-view .task-item .title {
-    font-weight: bold;
-    font-size: 1.3rem;
+    font-size: var(--fs-main);
+    color: var(--clr-text-main);
 }
 
-.content-view .task-item .description {
-    font-size: 1rem;
+.content-view .task-item .description, .task-item .dueDate {
+    font-size: var(--fs-sm);
+    color: var(--clr-text-muted);
+}
+
+.content-view hr {
+    width: 95%;
+    opacity: 60%;
+    margin: 0 auto;
 }
