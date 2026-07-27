@@ -10,7 +10,7 @@ function renderModalTitle(title) {
 
 function renderModalMetadata(type, subtype, title = "", description = "") {
     // TITLE
-    const titleContainer = document.createElement("div");
+    const titleContainer = document.createElement("p");
     
     const titleLabel = document.createElement("label");
     titleLabel.textContent = "Title:";
@@ -24,7 +24,7 @@ function renderModalMetadata(type, subtype, title = "", description = "") {
     titleContainer.appendChild(titleInput);
     
     // DESCRIPTION
-    const descriptionContainer = document.createElement("div");
+    const descriptionContainer = document.createElement("p");
     
     const descriptionLabel = document.createElement("label");
     descriptionLabel.htmlFor = `${subtype}-${type}-desc`;

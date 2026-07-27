@@ -32,8 +32,6 @@ function updateDetails(id, newObj, type) {
     } else if (type == "project") {
         updateProjectsArray();
     }
-
-    console.log(obj);
 }
 
 function getModalDetails(type, subtype) {

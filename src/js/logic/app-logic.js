@@ -8,6 +8,8 @@ import { tasksArray } from "../storage/todo-storage.js";
 function refreshPage(project = false) {
     const appContainer = document.querySelector("#app-container");
 
+    const isProjectContClosed = document.querySelector("#list-projects").classList.contains("closed");
+
     const selectedTab = getCurrentTab();
     
     appContainer.replaceChildren();
@@ -30,6 +32,11 @@ function refreshPage(project = false) {
     }
 
     const contentView = renderContentView(tabName, tasksArray, project);
+
+    if (isProjectContClosed) {
+        sidebar.querySelector("#list-projects").classList.add("closed");
+        sidebar.querySelector(".projects-container").classList.add("closed");
+    }
 
     appContainer.appendChild(sidebar);
     appContainer.appendChild(contentView);

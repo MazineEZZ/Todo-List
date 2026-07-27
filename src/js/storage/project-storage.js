@@ -1,4 +1,3 @@
-import { renderContentView } from "../dom/render-content";
 import { deleteProjectTasks } from "./todo-storage";
 
 let projectsArray = [

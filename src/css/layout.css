@@ -25,20 +25,59 @@ body {
     padding: 20px;
     width: 280px;
     resize: both;
-    gap: 10px;
+    gap: var(--space-lg);
 
     background-color: var(--clr-sidebar);
+
+    transition: all 0.6s;
+}
+
+.sidebar.closed {
+    transform: translateX(-280px)
 }
 
 .profile {
     height: 3.5em;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.profile .details {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: var(--space-sm);
+}
+
+.profile img {
+    width: 2.5em;
+    height: 2.5em;
+    
+    border-radius: 50%;
+    outline: 2px solid var(--clr-primary);
+    outline-offset: 2px;
+    
+    cursor: pointer;
+}
+
+.profile #username {
+    font-size: var(--fs-lg);
+    font-weight: var(--fw-semibold);
+}
+
+.profile #toggle-sidebar {
+    width: 2em;
+    height: 2em;
+
+    transition: transform 0.6s, background-color 0.3s ;
 }
 
 .navigation {
     display: flex;
     flex-direction: column;
     flex-grow: 1;
-
+    
     gap: var(--space-md);
 }
 
@@ -56,7 +95,7 @@ body {
     display: flex;
     justify-content: flex-start;
     align-items: center;
-
+    
     gap: var(--space-xs);
     padding: var(--space-2xs);
 }
@@ -69,15 +108,32 @@ body {
     width: 80%;
 }
 
+.my-projects #list-projects svg {
+    transform: rotate(0deg);
+    transition: 0.2s ease;
+}
+
+.my-projects #list-projects.closed svg {
+    transform: rotate(-90deg);
+}
+
 .projects-container {
     display: flex;
     flex-direction: column;
+    
+    clip-path: inset(0 0 0 0); 
+    transition: clip-path 0.3s ease-in-out, opacity 0.3s ease-in-out;
+}
+
+.projects-container.closed {
+    clip-path: inset(0 0 100% 0); 
+    opacity: 0; 
 }
 
 .my-projects, .projects-container .project-tab {
     display: flex;
     justify-content: space-between;
-
+    
     flex: 1;
     gap: var(--space-xs);
 }
@@ -91,7 +147,6 @@ body {
     color: var(--clr-text-primary);
     transition: background-color 0.15s ease, color 0.15s ease;
 }
-
 
 /* SVG */
 svg {
@@ -122,13 +177,28 @@ svg {
 
 /* * CONTENT */
 .content-view {
-    padding: 3em clamp(4rem, 8vw, 10rem);
+    padding: 4em clamp(4rem, 8vw, 10rem);
     display: flex;
     flex-direction: column;
     gap: var(--space-lg);
+
+    transition: all 0.6s;
+}
+
+.content-view.closed {
+    margin-left: -280px;
+}
+
+#toggle-sidebar.closed {
+    transform: translateX(80px);
 }
 
 .content-view .header {
+    display: flex;
+    flex-direction: column;
+}
+
+.content-view .title-container {
     display: flex;
     justify-content: space-between;
 }
@@ -136,6 +206,19 @@ svg {
 .content-view .title {
     font-size: var(--fs-xl);
     color: var(--clr-text-main);
+}
+
+.content-view .header .description {
+    width: fit-content;
+    max-width: 60%;
+
+    text-decoration: none;
+    cursor: pointer;
+}
+
+
+.content-view .header .description:hover {
+    text-decoration: underline;
 }
 
 ul.tasks-container {
@@ -159,9 +242,10 @@ ul.tasks-container {
 }
 
 .content-view .task-item .title {
-    font-size: var(--fs-main);
+    font-size: var(--fs-base);
     color: var(--clr-text-main);
 }
+
 
 .content-view .task-item .description, .task-item .dueDate {
     font-size: var(--fs-sm);

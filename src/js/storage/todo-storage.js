@@ -4,6 +4,7 @@ let tasksArray = [
         title: "Go grocery shopping",
         description: "Buy milk, eggs, and vegetables",
         isComplete: false,
+        priority: "medium",
         projectId: "inbox"
     },
     {
@@ -11,6 +12,7 @@ let tasksArray = [
         title: "Make lunch",
         description: "Vegetable stew",
         isComplete: false,
+        priority: "high",
         projectId: "inbox"
     }
 ];

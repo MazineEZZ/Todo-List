@@ -1,7 +1,8 @@
 import { capitalize } from "../utils/utilities";
 import { sortByDate } from "../storage/todo-storage";
 import { PRIORITY_COLORS } from "../global/variables";
-import { createElement, CalendarDays, Inbox, Plus, ChevronDown, SquarePen, PenLine, Trash2, Circle, CirclePlus, CircleCheck } from "lucide";
+import avatarImg from "../../assets/images/avatar.jpeg"
+import { createElement, CalendarDays, Inbox, Plus, PanelLeft, ChevronDown, SquarePen, PenLine, Trash2, Circle, CirclePlus, CircleCheck } from "lucide";
 
 function createTitle(filterTitle) {
     const title = document.createElement("h1");
@@ -102,7 +103,9 @@ function createTodosContainer(tasksArray, project = false) {
             todosContainer.appendChild(document.createElement("hr"))
         }
     });
-    todosContainer.removeChild(todosContainer.lastChild)
+    if (todosContainer.children.length != 0) {
+        todosContainer.removeChild(todosContainer.lastChild)
+    }
     return todosContainer;
 }
 
@@ -146,8 +149,27 @@ function renderSidebar(projects) {
     // Profile Compartment
     const profile = document.createElement("div");
     profile.classList.add("profile");
-    profile.textContent = "Img - Profile";
-    // TODO: profile elements
+    
+    const profileDetails = document.createElement("div");
+    profileDetails.classList.add("details");
+
+    const avatar = document.createElement("img");
+    avatar.src = avatarImg;
+
+    const profileUsername = document.createElement("p");
+    profileUsername.id = "username";
+    profileUsername.textContent = "Mazine";
+
+    const toggleSidebar = document.createElement("button");
+    toggleSidebar.id = "toggle-sidebar";
+
+    toggleSidebar.appendChild(createElement(PanelLeft))
+
+    profileDetails.appendChild(avatar);
+    profileDetails.appendChild(profileUsername);
+
+    profile.appendChild(profileDetails);
+    profile.appendChild(toggleSidebar);
 
     // Navigation Compartment
     const navigationContainer = document.createElement("div");
@@ -245,11 +267,24 @@ function renderContentView(filterTitle, tasksArray, project = false) {
 
     addTaskBtn.appendChild(createElement(CirclePlus))
 
-    header.appendChild(title);
-    header.appendChild(addTaskBtn);
+    const contain = document.createElement("div");
+    contain.classList.add("title-container");
 
+    contain.appendChild(title);
+    contain.appendChild(addTaskBtn)
+
+    header.appendChild(contain);
+    
+    if (project && project.description) {
+        const projectDescription = document.createElement("p");
+        projectDescription.id = "project-desc";
+        projectDescription.classList.add("description");
+        projectDescription.textContent = project.description;
+        
+        header.appendChild(projectDescription)
+    }
     contentWrapper.appendChild(header);
-
+    
     // MAIN BODY
     let todosContainer;
     if (filterTitle === "upcoming") {
@@ -257,13 +292,7 @@ function renderContentView(filterTitle, tasksArray, project = false) {
     } else {
         todosContainer = createTodosContainer(tasksArray, project);        
     }
-    
-    if (project && project.description) {
-        const projectDescription = document.createElement("p");
-        projectDescription.textContent = project.description;
-        contentWrapper.appendChild(projectDescription);
-    }
-    
+
     contentWrapper.appendChild(todosContainer);
     
     return contentWrapper;

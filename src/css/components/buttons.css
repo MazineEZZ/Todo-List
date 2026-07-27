@@ -1,13 +1,18 @@
 /* SIDEBAR */
 button, .tab, .my-projects {
     background-color: transparent;
+
     border: none;
     border-radius: 0.3rem;
-    transition: 0.05s;
+    
+    cursor: pointer;
+
     font-family: var(--font-family);
+    
+    transition: 0.05s;
 }
 
-.tab button:hover, .my-projects button:hover {
+.tab button:hover, .my-projects button:hover, .profile button:hover {
     background-color: var(--clr-btn-hover)
 }
 

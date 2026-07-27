@@ -5,7 +5,6 @@ import { addTODO, deleteTODO, setTODOAsComplete, getTaskById } from "../storage/
 import { renderAddProjectModal, renderAddTaskModal, renderEditProjectModal, renderEditTaskModal } from "../dom/render-modals.js";
 
 function modifyModalBtn(target, refreshPage) {
-    const tabName = getCurrentTab().dataset.title;
     const modal = target.closest("[id$=-modal][class$=-dialog]");
     const type = modal.dataset.type;
     const subtype = modal.dataset.subtype;
@@ -50,8 +49,15 @@ function cancelModal(target) {
 }
 
 function editProjectBtn(target) {
-    const projectId = target.closest(".project-tab").dataset.id;
+    let elmnt;
+    if (target.id === "project-desc") {
+        elmnt = getCurrentTab();
+    } else {
+        elmnt = target.closest(".project-tab");
+    }
+    const projectId = elmnt.dataset.id;
     const project = getProjectById(projectId);
+
 
     appendModal(renderEditProjectModal(project.id, project.title, project.description));
 }
@@ -106,7 +112,35 @@ function loadPage(target, refreshPage) {
     refreshPage(project);
 }
 
+function toggleElements(btn, ...elements) {
+    if (btn.classList.contains("closed")) {
+        btn.classList.remove("closed");
+        elements.forEach((elmnt) => elmnt.classList.remove("closed"));
+    } else {
+        btn.classList.add("closed");
+        elements.forEach((elmnt) => elmnt.classList.add("closed"));
+    }
+}
+
+function handleScreenChange(e) {
+    const sidebar = document.querySelector("#sidebar");
+    const content = document.querySelector("#main-content");
+    const toggleSidebarBtn = document.querySelector("#toggle-sidebar");
+
+    if (e.matches) {
+        sidebar.classList.add('closed');
+        content.classList.add('closed');
+        toggleSidebarBtn.classList.add('closed');
+    } else {
+        sidebar.classList.remove('closed');
+        content.classList.remove('closed');
+        toggleSidebarBtn.classList.remove('closed');
+    }
+}
 export function setUpEventListeners(appContainer, modalContainer, refreshPage) {
+    const mediaQuery = window.matchMedia('(max-width: 600px)');
+    mediaQuery.addEventListener("change", handleScreenChange);
+
     appContainer.addEventListener("click", (e) => {
         if (e.target.classList.contains("delete-btn") || e.target.classList.contains("delete-project-btn")) {
             deleteObjBtn(e.target, refreshPage);
@@ -132,8 +166,20 @@ export function setUpEventListeners(appContainer, modalContainer, refreshPage) {
             appendModal(renderAddProjectModal())
         }
 
-        if (e.target.classList.contains("edit-project-btn")) {
+        if (e.target.classList.contains("edit-project-btn") || e.target.id === "project-desc") {
             editProjectBtn(e.target)
+        }
+
+        if (e.target.id === "toggle-sidebar") {
+            const sidebar = document.querySelector("#sidebar");
+            const content = document.querySelector("#main-content");
+
+            toggleElements(e.target, sidebar, content);
+        }
+
+        if (e.target.id === "list-projects") {
+                const projectContainer = document.querySelector(".projects-container");
+            toggleElements(e.target, projectContainer);
         }
     });
 
