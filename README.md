@@ -1,6 +1,6 @@
 # Todo List
 
-A single-page todo list app built as part of *The Odin Project curriculum*. It supports multiple projects, due dates, priority levels, and persists everything to `localStorage`. Here's a [live preview](https://mazine-ezz.github.io/Todo-list/)
+A single-page todo list app built as part of *The Odin Project curriculum*. It supports multiple projects, due dates, priority levels, and persists everything to `localStorage`. Here's a [live preview](https://mazineezz.github.io/Todo-List/)
 
 ## Features: 
 - Inbox, Upcoming, and custom Project views
